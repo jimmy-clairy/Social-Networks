@@ -68,7 +68,15 @@ module.exports.deleteOneUser = async (req, res) => {
             return res.status(404).json({ error: `User not found with ID: ${userId}` });
         }
 
+        // Remove user from followers and following arrays of other users
+        await UserModel.updateMany(
+            { $or: [{ followers: userId }, { following: userId }] },
+            { $pull: { followers: userId, following: userId } }
+        );
+
+        // Delete the user
         await UserModel.findByIdAndDelete(userId)
+
         res.status(200).json('User has been deleted')
     } catch (err) {
         return res.status(500).json('Problem deleteOneUser')
@@ -181,4 +189,3 @@ module.exports.unfollow = async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 };
-
