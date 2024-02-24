@@ -1,8 +1,7 @@
 // Importation des packages
 const mongoose = require('mongoose');
+const uniqueValidator = require('mongoose-unique-validator');
 const { isEmail } = require('validator');
-const bcrypt = require('bcrypt')
-
 
 // Création du schéma pour la base de données MongoDB
 const userSchema = mongoose.Schema(
@@ -10,8 +9,8 @@ const userSchema = mongoose.Schema(
         pseudo: {
             type: String,
             required: true,
-            minLength: 3,
-            maxLength: 55,
+            minlength: 3,
+            maxlength: 55,
             unique: true,
             trim: true
         },
@@ -26,8 +25,6 @@ const userSchema = mongoose.Schema(
         password: {
             type: String,
             required: true,
-            max: 1024,
-            minLength: 6
         },
         picture: {
             type: String,
@@ -52,11 +49,7 @@ const userSchema = mongoose.Schema(
     }
 );
 
-userSchema.pre("save", async function (next) {
-    const salt = await bcrypt.genSalt();
-    this.password = await bcrypt.hash(this.password, salt)
-    next()
-})
+userSchema.plugin(uniqueValidator);
 
 // Exportation du schéma
 module.exports = mongoose.model('User', userSchema);
