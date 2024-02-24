@@ -3,10 +3,8 @@ require('./config/db')
 const express = require('express');
 const cookieParser = require('cookie-parser')
 const { checkUser, requireAuth } = require('./middlewares/auth.middleware')
-
-// Routes
-const userRoutes = require('./routes/user.route');
-// const postRoutes = require('./routes/post.route');
+const userRoutes = require('./routes/user.routes');
+const postRoutes = require('./routes/post.routes');
 
 // Création de l'application express    
 const app = express();
@@ -28,8 +26,9 @@ app.use((req, res, next) => {
 });
 // Permet d'accéder au corps de la requête
 
+// Routes
 app.use('/api/user', userRoutes);
-// app.use('/api/post', postRoutes);
+app.use('/api/post', postRoutes);
 // app.use('/images', express.static(path.join(__dirname, 'images')));
 
 module.exports = app;
