@@ -76,3 +76,86 @@ module.exports.updateOnePost = async (req, res) => {
         res.status(500).json('Problème Serveur')
     }
 }
+
+
+module.exports.likePost = async (req, res) => {
+    try {
+        const postId = req.params.id
+        const userId = req.body.id
+
+        if (!ObjectId.isValid(postId)) {
+            return res.status(400).json({ error: `Invalid Post ID: ${postId}` })
+        }
+        if (!ObjectId.isValid(userId)) {
+            return res.status(400).json({ error: `Invalid User ID: ${userId}` })
+        }
+
+        const post = await PostModel.findById(postId)
+        if (!post) {
+            return res.status(400).json({ error: `Invalid Post ID: ${postId}` })
+        }
+        const user = await UserModel.findById(userId)
+        if (!user) {
+            return res.status(400).json({ error: `Invalid user ID: ${userId}` })
+        }
+
+        const postLiked = await PostModel.findByIdAndUpdate(
+            postId,
+            { $addToSet: { likers: userId } },
+            { new: true }
+        ).select('posterId likers');
+
+        const userLiked = await UserModel.findByIdAndUpdate(
+            userId,
+            { $addToSet: { likes: postId } },
+            { new: true }
+        ).select('pseudo likes');
+
+
+        res.status(200).json({ postLiked, userLiked });
+    } catch (error) {
+        res.status(500).json('Problème Serveur')
+    }
+}
+
+module.exports.unlikePost = async (req, res) => {
+    try {
+        const postId = req.params.id
+        const userId = req.body.id
+
+        if (!ObjectId.isValid(postId)) {
+            return res.status(400).json({ error: `Invalid Post ID: ${postId}` })
+        }
+        if (!ObjectId.isValid(userId)) {
+            return res.status(400).json({ error: `Invalid User ID: ${userId}` })
+        }
+
+        const post = await PostModel.findById(postId)
+        if (!post) {
+            return res.status(400).json({ error: `Invalid Post ID: ${postId}` })
+        }
+        const user = await UserModel.findById(userId)
+        if (!user) {
+            return res.status(400).json({ error: `Invalid user ID: ${userId}` })
+        }
+
+        const postLiked = await PostModel.findByIdAndUpdate(
+            postId,
+            { $pull: { likers: userId } },
+            { new: true }
+        ).select('posterId likers');
+
+        const userLiked = await UserModel.findByIdAndUpdate(
+            userId,
+            { $pull: { likes: postId } },
+            { new: true }
+        ).select('pseudo likes');
+
+
+        res.status(200).json({ postLiked, userLiked });
+    } catch (error) {
+        res.status(500).json('Problème Serveur')
+    }
+}
+
+
