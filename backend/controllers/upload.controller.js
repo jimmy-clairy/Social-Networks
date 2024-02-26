@@ -2,18 +2,18 @@ const UserModel = require('../models/User.model');
 const ObjectId = require('mongoose').Types.ObjectId;
 const fs = require('fs');
 
-// Vérification du format du fichier
+// Check the file format
 function checkFileFormat(mimetype) {
     const acceptedFormats = ["image/jpg", "image/png", "image/jpeg"];
     return acceptedFormats.includes(mimetype);
 }
 
-// Vérification de la taille du fichier
+// Check the file size
 function checkFileSize(size, maxSizeKB) {
     return size <= maxSizeKB * 1000;
 }
 
-// Vérification de la validité de l'ID de l'utilisateur
+// Check the validity of the user ID
 async function checkUserId(userId) {
     if (!ObjectId.isValid(userId)) {
         throw new Error(`Invalid user ID: ${userId}`);
@@ -24,16 +24,17 @@ async function checkUserId(userId) {
     }
 }
 
-// Fonction pour gérer le téléchargement de l'image
+// Function to handle image upload
 module.exports.uploadProfil = async (req, res) => {
     try {
         if (!req.file) {
             throw new Error('No file uploaded');
         }
 
-        const maxSizeFileKB = 500; // Taille maximale autorisée en kilo-octets
+        const maxSizeFileKB = 500; // Maximum allowed size in kilobytes
         const { size, mimetype, buffer } = req.file;
         const userId = req.body.userId;
+        const fileName = `${userId}.jpg`
 
         if (!checkFileFormat(mimetype)) {
             throw new Error("Incompatible format");
@@ -45,21 +46,27 @@ module.exports.uploadProfil = async (req, res) => {
 
         await checkUserId(userId);
 
-        // Créer le chemin de destination
-        const destinationFolder = __dirname + '/../client/public/uploads/profil';
+        // Create the destination path
+        const destinationFolder = __dirname + '/../client/public/uploads/profile';
 
-        // Vérifier si le dossier de destination existe, sinon le créer
+        // Check if the destination folder exists, if not, create it
         if (!fs.existsSync(destinationFolder)) {
             fs.mkdirSync(destinationFolder, { recursive: true });
         }
 
-        // Définir le chemin complet pour l'image
-        const destinationPath = `${destinationFolder}/${userId}.jpg`;
+        // Set the full path for the image
+        const destinationPath = `${destinationFolder}/${fileName}`;
 
-        // Écrire le contenu du buffer dans le fichier
+        // Write the buffer content to the file
         await fs.promises.writeFile(destinationPath, buffer);
 
-        return res.status(201).json({ message: 'Image uploaded successfully' });
+        const userUpdated = await UserModel.findByIdAndUpdate(
+            userId,
+            { $set: { picture: `./uploads/profile/${fileName}` } },
+            { new: true }
+        )
+
+        return res.status(201).json({ message: 'Image uploaded successfully', userUpdated });
     } catch (err) {
         return res.status(400).json({ error: err.message });
     }
