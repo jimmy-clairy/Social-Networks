@@ -1,4 +1,5 @@
-const UserModel = require("../models/User.model")
+const UserModel = require("../models/User.model");
+const { checkUserId } = require("../utils/check.utils");
 const ObjectId = require('mongoose').Types.ObjectId
 
 module.exports.getAllUsers = async (req, res) => {
@@ -13,14 +14,8 @@ module.exports.getAllUsers = async (req, res) => {
 module.exports.getOneUser = async (req, res) => {
     try {
         const userId = req.params.id
-        if (!ObjectId.isValid(userId)) {
-            return res.status(400).json({ error: `Invalid user ID: ${userId}` })
-        }
-        const user = await UserModel.findById(userId).select('-password');
 
-        if (!user) {
-            return res.status(404).json({ error: `User not found with ID: ${id}` });
-        }
+        const user = await checkUserId(userId)
 
         res.status(200).json(user)
     } catch (err) {
@@ -32,15 +27,7 @@ module.exports.updateOneUser = async (req, res) => {
     try {
         const userId = req.params.id
 
-        if (!ObjectId.isValid(userId)) {
-            return res.status(400).json({ error: `Invalid user ID: ${userId}` })
-        }
-
-        const user = await UserModel.findById(userId);
-
-        if (!user) {
-            return res.status(404).json({ error: `User not found with ID: ${userId}` });
-        }
+        await checkUserId(userId)
 
         const userUpdated = await UserModel.findByIdAndUpdate(
             userId,
@@ -58,15 +45,8 @@ module.exports.deleteOneUser = async (req, res) => {
     try {
 
         const userId = req.params.id
-        if (!ObjectId.isValid(userId)) {
-            return res.status(400).json({ error: `Invalid user ID: ${userId}` })
-        }
 
-        const user = await UserModel.findById(userId);
-
-        if (!user) {
-            return res.status(404).json({ error: `User not found with ID: ${userId}` });
-        }
+        await checkUserId(userId)
 
         // Remove user from followers and following arrays of other users
         await UserModel.updateMany(
@@ -93,27 +73,8 @@ module.exports.follow = async (req, res) => {
             return res.status(400).json({ error: `Impossible follower ID: ${followerId} and following ID: ${followingId} same Id` });
         }
 
-        // Validate follower ID
-        if (!ObjectId.isValid(followerId)) {
-            return res.status(400).json({ error: `Invalid follower ID: ${followerId}` });
-        }
-
-        // Validate following ID
-        if (!ObjectId.isValid(followingId)) {
-            return res.status(400).json({ error: `Invalid following ID: ${followingId}` });
-        }
-
-        // Check if follower exists
-        const follower = await UserModel.findById(followerId);
-        if (!follower) {
-            return res.status(404).json({ error: `Follower not found with ID: ${followerId}` });
-        }
-
-        // Check if following user exists
-        const following = await UserModel.findById(followingId);
-        if (!following) {
-            return res.status(404).json({ error: `Following user not found with ID: ${followingId}` });
-        }
+        await checkUserId(followerId)
+        await checkUserId(followingId)
 
         // Add followingId to follower's following list
         const updatedFollower = await UserModel.findByIdAndUpdate(
@@ -146,27 +107,8 @@ module.exports.unfollow = async (req, res) => {
             return res.status(400).json({ error: `Impossible follower ID: ${followerId} and following ID: ${followingId} same Id` });
         }
 
-        // Validate follower ID
-        if (!ObjectId.isValid(followerId)) {
-            return res.status(400).json({ error: `Invalid follower ID: ${followerId}` });
-        }
-
-        // Validate following ID
-        if (!ObjectId.isValid(followingId)) {
-            return res.status(400).json({ error: `Invalid following ID: ${followingId}` });
-        }
-
-        // Check if follower exists
-        const follower = await UserModel.findById(followerId);
-        if (!follower) {
-            return res.status(404).json({ error: `Follower not found with ID: ${followerId}` });
-        }
-
-        // Check if following user exists
-        const following = await UserModel.findById(followingId);
-        if (!following) {
-            return res.status(404).json({ error: `Following user not found with ID: ${followingId}` });
-        }
+        await checkUserId(followerId)
+        await checkUserId(followingId)
 
         // Remove followingId from follower's following list
         const updatedFollower = await UserModel.findByIdAndUpdate(

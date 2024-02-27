@@ -1,41 +1,19 @@
 const PostModel = require('../models/Post.model')
-const UserModel = require('../models/User.model')
-const ObjectId = require('mongoose').Types.ObjectId
+const UserModel = require('../models/User.model');
+const { checkFileFormat, checkFileSize, checkUserId, checkPostId } = require('../utils/check.utils');
 const fsPromises = require('fs').promises;
-
-// Check the validity of the user ID
-async function checkUserId(userId) {
-    if (!ObjectId.isValid(userId)) {
-        throw new Error(`Invalid user ID: ${userId}`);
-    }
-    const user = await UserModel.findById(userId);
-    if (!user) {
-        throw new Error(`User not found with ID: ${userId}`);
-    }
-}
-
-// Check the file format
-function checkFileFormat(mimetype) {
-    const acceptedFormats = ["image/jpg", "image/png", "image/jpeg"];
-    return acceptedFormats.includes(mimetype);
-}
-
-// Check the file size
-function checkFileSize(size, maxSizeKB) {
-    return size <= maxSizeKB * 1000;
-}
 
 module.exports.createOnePost = async (req, res) => {
     try {
-        const fileName = req.body.posterId
+        const posterId = req.body.posterId
 
-        await checkUserId(fileName)
+        await checkUserId(posterId)
 
         let picture;
         if (req.file) {
 
-            const { size, mimetype, buffer } = req.file;
             const maxSizeFileKB = 500;
+            const { size, mimetype, buffer } = req.file;
 
             if (!checkFileFormat(mimetype)) {
                 throw new Error("Incompatible format");
@@ -48,15 +26,15 @@ module.exports.createOnePost = async (req, res) => {
             const destinationFolder = __dirname + '/../client/public/uploads/posts';
             await fsPromises.mkdir(destinationFolder, { recursive: true });
 
-            const getFileName = `${fileName}${Date.now()}.jpg`
-            const destinationPath = `${destinationFolder}/${getFileName}`;
+            const fileName = `${posterId}${Date.now()}.jpg`
+            const destinationPath = `${destinationFolder}/${fileName}`;
             await fsPromises.writeFile(destinationPath, buffer);
 
-            picture = `./uploads/posts/${getFileName}`;
+            picture = `./uploads/posts/${fileName}`;
         }
 
         const newPost = new PostModel({
-            posterId: req.body.posterId,
+            posterId,
             message: req.body.message,
             video: req.body.video,
             picture
@@ -80,7 +58,12 @@ module.exports.getAllPosts = async (req, res) => {
 
 module.exports.getOnePost = async (req, res) => {
     try {
-        const post = await PostModel.findById(req.params.id)
+        const postId = req.params.id
+
+        await checkPostId(postId)
+
+        const post = await PostModel.findById(postId)
+
         res.status(200).json({ message: 'Get one post', post })
     } catch (error) {
         res.status(500).json({ error })
@@ -91,14 +74,7 @@ module.exports.deleteOnePost = async (req, res) => {
     try {
         const postId = req.params.id
 
-        if (!ObjectId.isValid(postId)) {
-            return res.status(400).json({ error: `Invalid Post ID: ${postId}` })
-        }
-
-        const post = await PostModel.findById(postId)
-        if (!post) {
-            return res.status(400).json({ error: `Invalid Post ID: ${postId}` })
-        }
+        await checkPostId(postId)
 
         await PostModel.findByIdAndDelete(postId)
 
@@ -112,14 +88,7 @@ module.exports.updateOnePost = async (req, res) => {
     try {
         const postId = req.params.id
 
-        if (!ObjectId.isValid(postId)) {
-            return res.status(400).json({ error: `Invalid Post ID: ${postId}` })
-        }
-
-        const post = await PostModel.findById(postId)
-        if (!post) {
-            return res.status(400).json({ error: `Invalid Post ID: ${postId}` })
-        }
+        await checkPostId(postId)
 
         const postUpdated = await PostModel.findByIdAndUpdate(postId, { message: req.body.message }, { new: true })
 
@@ -135,21 +104,8 @@ module.exports.likePost = async (req, res) => {
         const postId = req.params.id
         const userId = req.body.id
 
-        if (!ObjectId.isValid(postId)) {
-            return res.status(400).json({ error: `Invalid Post ID: ${postId}` })
-        }
-        if (!ObjectId.isValid(userId)) {
-            return res.status(400).json({ error: `Invalid User ID: ${userId}` })
-        }
-
-        const post = await PostModel.findById(postId)
-        if (!post) {
-            return res.status(400).json({ error: `Invalid Post ID: ${postId}` })
-        }
-        const user = await UserModel.findById(userId)
-        if (!user) {
-            return res.status(400).json({ error: `Invalid user ID: ${userId}` })
-        }
+        await checkPostId(postId)
+        await checkUserId(userId)
 
         const postLiked = await PostModel.findByIdAndUpdate(
             postId,
@@ -175,21 +131,8 @@ module.exports.unlikePost = async (req, res) => {
         const postId = req.params.id
         const userId = req.body.id
 
-        if (!ObjectId.isValid(postId)) {
-            return res.status(400).json({ error: `Invalid Post ID: ${postId}` })
-        }
-        if (!ObjectId.isValid(userId)) {
-            return res.status(400).json({ error: `Invalid User ID: ${userId}` })
-        }
-
-        const post = await PostModel.findById(postId)
-        if (!post) {
-            return res.status(400).json({ error: `Invalid Post ID: ${postId}` })
-        }
-        const user = await UserModel.findById(userId)
-        if (!user) {
-            return res.status(400).json({ error: `Invalid user ID: ${userId}` })
-        }
+        await checkPostId(postId)
+        await checkUserId(userId)
 
         const postLiked = await PostModel.findByIdAndUpdate(
             postId,
@@ -215,9 +158,7 @@ module.exports.commentPost = async (req, res) => {
     try {
         const postId = req.params.id
 
-        if (!ObjectId.isValid(postId)) {
-            return res.status(400).json({ error: `Invalid Post ID: ${postId}` })
-        }
+        await checkPostId(postId)
 
         const postCommented = await PostModel.findByIdAndUpdate(
             postId,
@@ -242,14 +183,8 @@ module.exports.commentPost = async (req, res) => {
 module.exports.editCommentPost = async (req, res) => {
     try {
         const postId = req.params.id
-        if (!ObjectId.isValid(postId)) {
-            return res.status(400).json({ error: `Invalid Post ID: ${postId}` })
-        }
 
-        const post = await PostModel.findById(postId)
-        if (!post) {
-            return res.status(400).json({ error: `Invalid Post ID: ${postId}` })
-        }
+        await checkPostId(postId)
 
         const { comments } = post
         const comment = comments.find((comment) => comment.id === req.body.commentId)
@@ -271,13 +206,8 @@ module.exports.editCommentPost = async (req, res) => {
 module.exports.deleteCommentPost = async (req, res) => {
     try {
         const postId = req.params.id
-        if (!ObjectId.isValid(postId)) {
-            return res.status(400).json({ error: `Invalid Post ID: ${postId}` })
-        }
-        const post = await PostModel.findById(postId)
-        if (!post) {
-            return res.status(400).json({ error: `Invalid Post ID: ${postId}` })
-        }
+
+        await checkPostId(postId)
 
         /** Soluce 1 */
         const { comments } = post

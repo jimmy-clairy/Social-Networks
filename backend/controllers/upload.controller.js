@@ -1,28 +1,6 @@
 const UserModel = require('../models/User.model');
-const ObjectId = require('mongoose').Types.ObjectId;
 const fs = require('fs');
-
-// Check the file format
-function checkFileFormat(mimetype) {
-    const acceptedFormats = ["image/jpg", "image/png", "image/jpeg"];
-    return acceptedFormats.includes(mimetype);
-}
-
-// Check the file size
-function checkFileSize(size, maxSizeKB) {
-    return size <= maxSizeKB * 1000;
-}
-
-// Check the validity of the user ID
-async function checkUserId(userId) {
-    if (!ObjectId.isValid(userId)) {
-        throw new Error(`Invalid user ID: ${userId}`);
-    }
-    const user = await UserModel.findById(userId);
-    if (!user) {
-        throw new Error(`User not found with ID: ${userId}`);
-    }
-}
+const { checkFileFormat, checkFileSize, checkUserId } = require('../utils/check.utils');
 
 // Function to handle image upload
 module.exports.uploadProfil = async (req, res) => {
