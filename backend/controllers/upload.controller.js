@@ -1,5 +1,5 @@
 const UserModel = require('../models/User.model');
-const fs = require('fs');
+const fsPromises = require('fs').promises;
 const { checkFileFormat, checkFileSize, checkUserId } = require('../utils/check.utils');
 
 // Function to handle image upload
@@ -28,15 +28,13 @@ module.exports.uploadProfil = async (req, res) => {
         const destinationFolder = __dirname + '/../client/public/uploads/profile';
 
         // Check if the destination folder exists, if not, create it
-        if (!fs.existsSync(destinationFolder)) {
-            fs.mkdirSync(destinationFolder, { recursive: true });
-        }
+        await fsPromises.mkdir(destinationFolder, { recursive: true });
 
         // Set the full path for the image
         const destinationPath = `${destinationFolder}/${fileName}`;
 
         // Write the buffer content to the file
-        await fs.promises.writeFile(destinationPath, buffer);
+        await fsPromises.writeFile(destinationPath, buffer);
 
         const userUpdated = await UserModel.findByIdAndUpdate(
             userId,

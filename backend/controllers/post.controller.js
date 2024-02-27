@@ -51,8 +51,8 @@ module.exports.getAllPosts = async (req, res) => {
     try {
         const posts = await PostModel.find().sort({ createdAt: -1 }) // Permet d'inversé les posts
         res.status(200).json({ message: 'Get all posts', posts })
-    } catch (error) {
-        res.status(500).json({ error })
+    } catch (err) {
+        res.status(500).json({ error: err.message })
     }
 }
 
@@ -65,8 +65,8 @@ module.exports.getOnePost = async (req, res) => {
         const post = await PostModel.findById(postId)
 
         res.status(200).json({ message: 'Get one post', post })
-    } catch (error) {
-        res.status(500).json({ error })
+    } catch (err) {
+        res.status(500).json({ error: err.message })
     }
 }
 
@@ -79,8 +79,8 @@ module.exports.deleteOnePost = async (req, res) => {
         await PostModel.findByIdAndDelete(postId)
 
         res.status(200).json({ message: 'Delete one post' })
-    } catch (error) {
-        res.status(500).json({ error })
+    } catch (err) {
+        res.status(500).json({ error: err.message })
     }
 }
 
@@ -93,8 +93,8 @@ module.exports.updateOnePost = async (req, res) => {
         const postUpdated = await PostModel.findByIdAndUpdate(postId, { message: req.body.message }, { new: true })
 
         res.status(200).json({ message: 'Update one post', postUpdated })
-    } catch (error) {
-        res.status(500).json({ error })
+    } catch (err) {
+        res.status(500).json({ error: err.message })
     }
 }
 
@@ -121,8 +121,8 @@ module.exports.likePost = async (req, res) => {
 
 
         res.status(200).json({ postLiked, userLiked });
-    } catch (error) {
-        res.status(500).json({ error })
+    } catch (err) {
+        res.status(500).json({ error: err.message })
     }
 }
 
@@ -148,8 +148,8 @@ module.exports.unlikePost = async (req, res) => {
 
 
         res.status(200).json({ postLiked, userLiked });
-    } catch (error) {
-        res.status(500).json({ error })
+    } catch (err) {
+        res.status(500).json({ error: err.message })
     }
 }
 
@@ -198,8 +198,8 @@ module.exports.editCommentPost = async (req, res) => {
         await post.save()
 
         res.status(202).json(comment)
-    } catch (error) {
-        res.status(500).json({ error })
+    } catch (err) {
+        res.status(500).json({ error: err.message })
     }
 }
 
@@ -233,7 +233,7 @@ module.exports.deleteCommentPost = async (req, res) => {
         // )
 
         res.status(202).json(post)
-    } catch (error) {
-        res.status(500).json({ error })
+    } catch (err) {
+        res.status(500).json({ error: err.message })
     }
 }

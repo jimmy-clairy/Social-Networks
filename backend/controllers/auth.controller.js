@@ -1,8 +1,6 @@
 const UserModel = require('../models/User.model.js');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const { signUpErrors } = require('../utils/errors.utils.js');
-
 const { TOKEN_SECRET } = process.env;
 
 const maxAge = 3 * 24 * 60 * 60 * 1000
@@ -21,12 +19,12 @@ module.exports.signUp = async (req, res) => {
             pseudo: pseudo,
             email: email,
             password: hash,
+            bio: ''
         });
         await user.save();
         res.status(201).json({ message: "Utilisateur créé !", userId: user._id })
     } catch (err) {
-        const errors = signUpErrors(err)
-        res.status(500).json(errors)
+        res.status(500).json({ error: err.message })
     }
 }
 
@@ -47,9 +45,8 @@ module.exports.login = async (req, res) => {
         res.cookie('jwt', token, { httpOnly: true, maxAge, secure: true })
 
         res.status(200).json({ user: user._id })
-
     } catch (err) {
-        res.status(500).json({ error: 'Prolème serveur' })
+        res.status(500).json({ error: err.message })
     }
 }
 

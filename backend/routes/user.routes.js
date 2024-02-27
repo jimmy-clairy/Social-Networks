@@ -5,8 +5,9 @@ const uploadController = require('../controllers/upload.controller')
 const multer = require("multer")
 const upload = multer()
 
+/** http://localhost:5000/api/user */
 // Auth
-router.post("/register", authController.signUp)
+router.post("/signup", authController.signUp)
 router.post("/login", authController.login)
 router.get("/logout", authController.logout)
 

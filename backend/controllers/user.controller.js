@@ -7,7 +7,7 @@ module.exports.getAllUsers = async (req, res) => {
         const users = await UserModel.find().select('-password');
         res.status(200).json(users)
     } catch (err) {
-        res.status(500).json(err)
+        res.status(500).json({ error: err.message })
     }
 }
 
@@ -19,7 +19,7 @@ module.exports.getOneUser = async (req, res) => {
 
         res.status(200).json(user)
     } catch (err) {
-        res.status(500).json(`ID unknown : ${err}`)
+        res.status(500).json({ error: err.message })
     }
 }
 
@@ -37,7 +37,7 @@ module.exports.updateOneUser = async (req, res) => {
 
         res.status(203).json(userUpdated)
     } catch (err) {
-        return res.status(500).json({ error: 'Internal Server Error' })
+        return res.status(500).json({ error: err.message })
     }
 }
 
@@ -59,7 +59,7 @@ module.exports.deleteOneUser = async (req, res) => {
 
         res.status(200).json('User has been deleted')
     } catch (err) {
-        return res.status(500).json('Problem deleteOneUser')
+        return res.status(500).json({ error: err.message })
     }
 }
 
