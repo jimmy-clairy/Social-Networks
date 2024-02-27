@@ -1,20 +1,72 @@
 const PostModel = require('../models/Post.model')
 const UserModel = require('../models/User.model')
 const ObjectId = require('mongoose').Types.ObjectId
+const fsPromises = require('fs').promises;
+
+// Check the validity of the user ID
+async function checkUserId(userId) {
+    if (!ObjectId.isValid(userId)) {
+        throw new Error(`Invalid user ID: ${userId}`);
+    }
+    const user = await UserModel.findById(userId);
+    if (!user) {
+        throw new Error(`User not found with ID: ${userId}`);
+    }
+}
+
+// Check the file format
+function checkFileFormat(mimetype) {
+    const acceptedFormats = ["image/jpg", "image/png", "image/jpeg"];
+    return acceptedFormats.includes(mimetype);
+}
+
+// Check the file size
+function checkFileSize(size, maxSizeKB) {
+    return size <= maxSizeKB * 1000;
+}
 
 module.exports.createOnePost = async (req, res) => {
     try {
+        const fileName = req.body.posterId
+
+        await checkUserId(fileName)
+
+        let picture;
+        if (req.file) {
+
+            const { size, mimetype, buffer } = req.file;
+            const maxSizeFileKB = 500;
+
+            if (!checkFileFormat(mimetype)) {
+                throw new Error("Incompatible format");
+            }
+
+            if (!checkFileSize(size, maxSizeFileKB)) {
+                throw new Error(`File size too large. Maximum size allowed is ${maxSizeFileKB} KB`);
+            }
+
+            const destinationFolder = __dirname + '/../client/public/uploads/posts';
+            await fsPromises.mkdir(destinationFolder, { recursive: true });
+
+            const getFileName = `${fileName}${Date.now()}.jpg`
+            const destinationPath = `${destinationFolder}/${getFileName}`;
+            await fsPromises.writeFile(destinationPath, buffer);
+
+            picture = `./uploads/posts/${getFileName}`;
+        }
+
         const newPost = new PostModel({
             posterId: req.body.posterId,
             message: req.body.message,
-            video: req.body.video
+            video: req.body.video,
+            picture
         })
-        await newPost.save()
-        res.status(201).json({ message: 'Create one Post', newPost })
-    } catch (error) {
-        res.status(500).json({ error })
-    }
 
+        await newPost.save()
+        res.status(201).json({ message: `Create one Post${picture ? ' with a picture' : ' without picture'}`, newPost })
+    } catch (err) {
+        res.status(500).json({ error: err.message })
+    }
 }
 
 module.exports.getAllPosts = async (req, res) => {
