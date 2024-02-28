@@ -1,6 +1,6 @@
 const UserModel = require("../models/User.model");
 const { checkUserId } = require("../utils/check.utils");
-const ObjectId = require('mongoose').Types.ObjectId
+const { uploadPicture } = require("../utils/uploadPicture.utils");
 
 module.exports.getAllUsers = async (req, res) => {
     try {
@@ -29,9 +29,14 @@ module.exports.updateOneUser = async (req, res) => {
 
         await checkUserId(userId)
 
+        let picture;
+        if (req.file) {
+            picture = await uploadPicture(userId, req.file)
+        }
+
         const userUpdated = await UserModel.findByIdAndUpdate(
             userId,
-            { $set: { bio: req.body.bio } },
+            { $set: { bio: req.body.bio, picture } },
             { new: true }
         ).select('-password');
 

@@ -13,7 +13,7 @@ router.get("/logout", authController.logout)
 // User 
 router.get("/", userController.getAllUsers)
 router.get("/:id", userController.getOneUser)
-router.put("/:id", userController.updateOneUser)
+router.put("/:id", upload.single("file"), userController.updateOneUser)
 router.delete("/:id", userController.deleteOneUser)
 
 // Follow
