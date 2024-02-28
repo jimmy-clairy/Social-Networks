@@ -64,8 +64,7 @@ module.exports.deleteOneUser = async (req, res) => {
         );
 
         // Delete the user's profile picture if it exists and it's not the default picture
-        const isDefaultPicture = user.picture === './uploads/profil/random-user.png';
-        if (!isDefaultPicture && user.picture) {
+        if (user.picture && user.picture !== './uploads/profil/random-user.png') {
             await fsPromises.unlink(`client/public/${user.picture}`);
         }
 
