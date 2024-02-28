@@ -3,12 +3,16 @@ const fsPromises = require('fs').promises;
 const { checkUserId } = require("../utils/check.utils");
 const { uploadPicture } = require("../utils/uploadPicture.utils");
 
+const handleError = (res, err) => {
+    res.status(500).json({ error: err.message });
+};
+
 module.exports.getAllUsers = async (req, res) => {
     try {
         const users = await UserModel.find().select('-password');
         res.status(200).json(users)
     } catch (err) {
-        res.status(500).json({ error: err.message })
+        handleError(res, err)
     }
 }
 
@@ -20,7 +24,7 @@ module.exports.getOneUser = async (req, res) => {
 
         res.status(200).json(user)
     } catch (err) {
-        res.status(500).json({ error: err.message })
+        handleError(res, err)
     }
 }
 
@@ -43,7 +47,7 @@ module.exports.updateOneUser = async (req, res) => {
 
         res.status(203).json(userUpdated)
     } catch (err) {
-        return res.status(500).json({ error: err.message })
+        return handleError(res, err)
     }
 }
 
@@ -70,7 +74,7 @@ module.exports.deleteOneUser = async (req, res) => {
 
         res.status(200).json('User has been deleted');
     } catch (err) {
-        return res.status(500).json({ error: err.message });
+        return handleError(res, err);
     }
 };
 
@@ -103,7 +107,7 @@ module.exports.follow = async (req, res) => {
         // Respond with updated follower and following user
         res.status(201).json({ updatedFollower, updatedFollowing });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        handleError(res, err);
     }
 };
 
@@ -136,6 +140,6 @@ module.exports.unfollow = async (req, res) => {
         // Respond with updated follower and following user
         res.status(201).json({ updatedFollower, updatedFollowing });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        handleError(res, err);
     }
 };
