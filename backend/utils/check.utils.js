@@ -44,7 +44,7 @@ module.exports.checkPostId = async (postId) => {
  * @returns {boolean} True if the format is accepted, otherwise false.
  */
 module.exports.checkFileFormat = (mimetype) => {
-    const acceptedFormats = ["image/jpg", "image/png", "image/jpeg"];
+    const acceptedFormats = ["image/jpg", "image/png", "image/jpeg", "image/webp"];
     return acceptedFormats.includes(mimetype);
 }
 
