@@ -16,6 +16,7 @@ const { checkFileFormat, checkFileSize } = require("./check.utils");
 module.exports.uploadPicture = async (userId, file, type = 'profile', maxSizeFileKB = 500) => {
     const { size, mimetype, buffer } = file;
 
+    // Check file format and size
     if (!checkFileFormat(mimetype)) {
         throw new Error("Incompatible format");
     }
@@ -28,11 +29,11 @@ module.exports.uploadPicture = async (userId, file, type = 'profile', maxSizeFil
     const destinationFolder = `${__dirname}/../client/public/uploads/${type}`;
     await fsPromises.mkdir(destinationFolder, { recursive: true });
 
-    // Set file name and path
-    const fileName = `${userId}.jpg`;
-    const destinationPath = `${destinationFolder}/${fileName}`;
+    // Set file name
+    const fileName = `${userId}${type === 'post' ? Date.now() : ''}.jpg`;
 
     // Write file to destination
+    const destinationPath = `${destinationFolder}/${fileName}`;
     await fsPromises.writeFile(destinationPath, buffer);
 
     // Return path to the uploaded picture

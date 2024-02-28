@@ -1,46 +1,33 @@
 const PostModel = require('../models/Post.model')
 const UserModel = require('../models/User.model');
-const { checkFileFormat, checkFileSize, checkUserId, checkPostId } = require('../utils/check.utils');
+const { checkUserId, checkPostId } = require('../utils/check.utils');
+const { uploadPicture } = require('../utils/uploadPicture.utils');
 const fsPromises = require('fs').promises;
 
 module.exports.createOnePost = async (req, res) => {
     try {
-        const posterId = req.body.posterId
+        const { posterId, message, video } = req.body
 
         await checkUserId(posterId)
 
         let picture;
         if (req.file) {
+            picture = await uploadPicture(posterId, req.file, 'post')
+        }
 
-            const maxSizeFileKB = 500;
-            const { size, mimetype, buffer } = req.file;
-
-            if (!checkFileFormat(mimetype)) {
-                throw new Error("Incompatible format");
-            }
-
-            if (!checkFileSize(size, maxSizeFileKB)) {
-                throw new Error(`File size too large. Maximum size allowed is ${maxSizeFileKB} KB`);
-            }
-
-            const destinationFolder = __dirname + '/../client/public/uploads/posts';
-            await fsPromises.mkdir(destinationFolder, { recursive: true });
-
-            const fileName = `${posterId}${Date.now()}.jpg`
-            const destinationPath = `${destinationFolder}/${fileName}`;
-            await fsPromises.writeFile(destinationPath, buffer);
-
-            picture = `./uploads/posts/${fileName}`;
+        if (!message && !video && !picture) {
+            throw new Error('No data provided for creating the post')
         }
 
         const newPost = new PostModel({
             posterId,
-            message: req.body.message,
-            video: req.body.video,
+            message,
+            video,
             picture
         })
 
         await newPost.save()
+
         res.status(201).json({ message: `Create one Post${picture ? ' with a picture' : ' without picture'}`, newPost })
     } catch (err) {
         res.status(500).json({ error: err.message })
@@ -74,7 +61,12 @@ module.exports.deleteOnePost = async (req, res) => {
     try {
         const postId = req.params.id
 
-        await checkPostId(postId)
+        const post = await checkPostId(postId)
+
+        // If the post has a picture, delete it
+        if (post.picture) {
+            await fsPromises.unlink(`client/public/${post.picture}`);
+        }
 
         await PostModel.findByIdAndDelete(postId)
 

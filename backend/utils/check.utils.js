@@ -34,6 +34,8 @@ module.exports.checkPostId = async (postId) => {
     if (!post) {
         throw new Error(`Post not found with ID: ${postId}`);
     }
+
+    return post
 }
 
 /**
