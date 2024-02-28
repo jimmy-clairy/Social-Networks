@@ -79,9 +79,9 @@ module.exports.deleteOnePost = async (req, res) => {
 module.exports.updateOnePost = async (req, res) => {
     try {
         const postId = req.params.id;
+        const { message, video } = req.body;
 
         const post = await checkPostId(postId);
-        const { message, video } = req.body;
 
         let picture = post.picture; // Keep the existing picture by default
 
@@ -99,11 +99,9 @@ module.exports.updateOnePost = async (req, res) => {
 
         res.status(200).json({ message: 'Update one post', postUpdated });
     } catch (err) {
-        // Handle errors
         res.status(500).json({ error: err.message });
     }
 };
-
 
 module.exports.likePost = async (req, res) => {
     try {
@@ -124,7 +122,6 @@ module.exports.likePost = async (req, res) => {
             { $addToSet: { likes: postId } },
             { new: true }
         ).select('pseudo likes');
-
 
         res.status(200).json({ postLiked, userLiked });
     } catch (err) {
@@ -159,87 +156,91 @@ module.exports.unlikePost = async (req, res) => {
     }
 }
 
-
 module.exports.commentPost = async (req, res) => {
     try {
-        const postId = req.params.id
+        const postId = req.params.id;
 
-        await checkPostId(postId)
+        await checkPostId(postId);
 
-        const postCommented = await PostModel.findByIdAndUpdate(
+        const { commenterId, commenterPseudo, text } = req.body;
+
+        // Check if all required fields are provided
+        if (!commenterId || !commenterPseudo || !text) {
+            throw new Error('Please provide commenterId, commenterPseudo, and text for the comment');
+        }
+
+        const newComment = {
+            commenterId,
+            commenterPseudo,
+            text,
+            timestamp: Date.now()
+        };
+
+        // Push the new comment to the array in the post
+        const updatedPost = await PostModel.findByIdAndUpdate(
             postId,
-            {
-                $push: {
-                    comments: {
-                        commenterId: req.body.commenterId,
-                        commenterPseudo: req.body.commenterPseudo,
-                        text: req.body.text,
-                        timestamp: new Date().getTime()
-                    }
-                }
-            }, { new: true }
-        )
+            { $push: { comments: newComment } },
+            { new: true }
+        );
 
-        res.status(200).json({ postCommented });
-    } catch (error) {
-        res.status(500).json({ error })
+        res.status(201).json({ message: 'Comment created successfully', updatedPost });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
     }
-}
+};
 
 module.exports.editCommentPost = async (req, res) => {
     try {
-        const postId = req.params.id
+        const postId = req.params.id;
+        const newText = req.body.text;
+        const commentId = req.body.commentId;
 
-        await checkPostId(postId)
+        const post = await checkPostId(postId);
 
-        const { comments } = post
-        const comment = comments.find((comment) => comment.id === req.body.commentId)
-
-        if (!comment) {
-            return res.status(400).json({ error: `Not found Comment` })
+        // Check if the new text exists
+        if (!newText) {
+            throw new Error(`Text is required`);
         }
 
-        comment.text = req.body.text
+        // Find the comment to edit
+        const comment = post.comments.find((comment) => comment._id.equals(commentId));
+        if (!comment) {
+            return res.status(400).json({ error: `Comment not found` });
+        }
 
-        await post.save()
+        // Update the text of the comment
+        comment.text = newText;
 
-        res.status(202).json(comment)
+        await post.save();
+
+        res.status(202).json({ message: 'Comment updated successfully', updatedComment: comment });
     } catch (err) {
-        res.status(500).json({ error: err.message })
+        res.status(500).json({ error: err.message });
     }
 }
 
 module.exports.deleteCommentPost = async (req, res) => {
     try {
-        const postId = req.params.id
+        const postId = req.params.id;
+        const commentId = req.body.commentId;
 
-        await checkPostId(postId)
+        const post = await checkPostId(postId);
 
-        /** Soluce 1 */
-        const { comments } = post
-        const otherComments = comments.filter((comment) => comment.id !== req.body.commentId)
-        if (otherComments.length === 0) {
-            return res.status(400).json({ error: `Not found comment` })
+        // Check if the comment exists in the post
+        const commentExists = post.comments.some(comment => comment._id.equals(commentId));
+        if (!commentExists) {
+            return res.status(400).json({ error: `Comment not found` });
         }
-        post.comments = otherComments
 
-        await post.save()
+        // Remove the comment from the post
+        await PostModel.findByIdAndUpdate(
+            postId,
+            { $pull: { comments: { _id: commentId } } },
+            { new: true }
+        );
 
-        /** Soluce 2 */
-        // const post = await PostModel.findByIdAndUpdate(
-        //     postId,
-        //     {
-        //         $pull: {
-        //             comments: {
-        //                 _id: req.body.commentId
-        //             }
-        //         }
-        //     },
-        //     { new: true }
-        // )
-
-        res.status(202).json(post)
+        res.status(202).json({ message: 'Comment deleted successfully' });
     } catch (err) {
-        res.status(500).json({ error: err.message })
+        res.status(500).json({ error: err.message });
     }
 }
