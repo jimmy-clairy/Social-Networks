@@ -10,10 +10,11 @@ const { checkFileFormat, checkFileSize } = require("./check.utils");
  * @param {Buffer} file.buffer - The buffer containing the file data.
  * @param {('profile'|'post')} [type='profile'] - The type of upload, can be 'profile' or 'post'. Default is 'profile'.
  * @param {number} [maxSizeFileKB=500] - The maximum allowed size of the file in kilobytes. Default is 500KB.
+ * @param {string} [modifWithSameFileName] - The file name when updating with the same file name.
  * @returns {Promise<string>} A Promise that resolves with the path to the uploaded picture.
  * @throws {Error} If the file format is incompatible or the file size exceeds the maximum allowed size.
  */
-module.exports.uploadPicture = async (userId, file, type = 'profile', maxSizeFileKB = 500) => {
+module.exports.uploadPicture = async (userId, file, type = 'profile', maxSizeFileKB = 500, modifWithSameFileName) => {
     const { size, mimetype, buffer } = file;
 
     // Check file format and size
@@ -30,7 +31,7 @@ module.exports.uploadPicture = async (userId, file, type = 'profile', maxSizeFil
     await fsPromises.mkdir(destinationFolder, { recursive: true });
 
     // Set file name
-    const fileName = `${userId}${type === 'post' ? Date.now() : ''}.jpg`;
+    const fileName = modifWithSameFileName ? modifWithSameFileName.replace('./uploads/post/', '') : `${userId}${type === 'post' ? Date.now() : ''}.jpg`;
 
     // Write file to destination
     const destinationPath = `${destinationFolder}/${fileName}`;

@@ -1,4 +1,4 @@
-const PostModel = require('../models/Post.model')
+const PostModel = require('../models/Post.model');
 const UserModel = require('../models/User.model');
 const { checkUserId, checkPostId } = require('../utils/check.utils');
 const { uploadPicture } = require('../utils/uploadPicture.utils');
@@ -37,7 +37,7 @@ module.exports.createOnePost = async (req, res) => {
 module.exports.getAllPosts = async (req, res) => {
     try {
         const posts = await PostModel.find().sort({ createdAt: -1 }) // Permet d'inversé les posts
-        res.status(200).json({ message: 'Get all posts', posts })
+        res.status(200).json({ message: `Get ${posts.length} posts`, posts })
     } catch (err) {
         res.status(500).json({ error: err.message })
     }
@@ -78,17 +78,31 @@ module.exports.deleteOnePost = async (req, res) => {
 
 module.exports.updateOnePost = async (req, res) => {
     try {
-        const postId = req.params.id
+        const postId = req.params.id;
 
-        await checkPostId(postId)
+        const post = await checkPostId(postId);
+        const { message, video } = req.body;
 
-        const postUpdated = await PostModel.findByIdAndUpdate(postId, { message: req.body.message }, { new: true })
+        let picture = post.picture; // Keep the existing picture by default
 
-        res.status(200).json({ message: 'Update one post', postUpdated })
+        // Update picture if a new file is uploaded
+        if (req.file) {
+            picture = await uploadPicture(postId, req.file, 'post', undefined, picture);
+        }
+
+        // Update post with new message, video, and picture
+        const postUpdated = await PostModel.findByIdAndUpdate(
+            postId,
+            { message, video, picture },
+            { new: true }
+        );
+
+        res.status(200).json({ message: 'Update one post', postUpdated });
     } catch (err) {
-        res.status(500).json({ error: err.message })
+        // Handle errors
+        res.status(500).json({ error: err.message });
     }
-}
+};
 
 
 module.exports.likePost = async (req, res) => {

@@ -6,7 +6,7 @@ const upload = multer()
 /** http://localhost:5000/api/post */
 router.post('/', upload.single("file"), postController.createOnePost)
 router.get('/', postController.getAllPosts)
-router.put('/:id', postController.updateOnePost)
+router.put('/:id', upload.single("file"), postController.updateOnePost)
 router.get('/:id', postController.getOnePost)
 router.delete('/:id', postController.deleteOnePost)
 
