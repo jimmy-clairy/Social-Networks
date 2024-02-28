@@ -18,8 +18,7 @@ module.exports.signUp = async (req, res) => {
         const user = new UserModel({
             pseudo: pseudo,
             email: email,
-            password: hash,
-            bio: ''
+            password: hash
         });
         await user.save();
         res.status(201).json({ message: "Utilisateur créé !", userId: user._id })
@@ -28,15 +27,19 @@ module.exports.signUp = async (req, res) => {
     }
 }
 
-
 module.exports.login = async (req, res) => {
     try {
         const { email, password } = req.body
 
         const user = await UserModel.findOne({ email: email });
+
+        if (!user) {
+            return res.status(401).json({ error: "Paire identifiant/mot de passe incorrecte" });
+        }
+
         const passwordIfValid = await bcrypt.compare(password, user.password);
 
-        if (!user || !passwordIfValid) {
+        if (!passwordIfValid) {
             return res.status(401).json({ error: "Paire identifiant/mot de passe incorrecte" });
         }
 
