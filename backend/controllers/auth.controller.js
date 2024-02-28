@@ -18,7 +18,8 @@ module.exports.signUp = async (req, res) => {
         const user = new UserModel({
             pseudo: pseudo,
             email: email,
-            password: hash
+            password: hash,
+            bio: ''
         });
         await user.save();
         res.status(201).json({ message: "Utilisateur créé !", userId: user._id })
