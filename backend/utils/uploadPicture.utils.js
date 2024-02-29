@@ -26,7 +26,7 @@ module.exports.uploadPicture = async (userId, file, type = 'profile', maxSizeFil
         throw new Error(`File size too large. Maximum size allowed is ${maxSizeFileKB} KB`);
     }
 
-    // Create destination folder
+    // Create destination folder if it doesn't exist
     const destinationFolder = `${__dirname}/../client/public/uploads/${type}`;
     await fsPromises.mkdir(destinationFolder, { recursive: true });
 
