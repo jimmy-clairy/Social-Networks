@@ -19,8 +19,7 @@ const postSchema = mongoose.Schema(
             type: String
         },
         likers: {
-            type: [String],
-            required: true
+            type: [String]
         },
         comments: {
             type: [{
@@ -28,8 +27,7 @@ const postSchema = mongoose.Schema(
                 commenterPseudo: String,
                 text: String,
                 timestamp: Number
-            }],
-            required: true
+            }]
         }
     },
     {
