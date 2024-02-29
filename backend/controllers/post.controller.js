@@ -83,6 +83,10 @@ module.exports.updateOnePost = async (req, res) => {
 
         const post = await checkPostId(postId);
 
+        if (!message && !video && !req.file) {
+            throw new Error('No data provided for creating the post')
+        }
+
         let picture = post.picture; // Keep the existing picture by default
 
         // Update picture if a new file is uploaded
