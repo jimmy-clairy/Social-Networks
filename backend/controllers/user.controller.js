@@ -2,6 +2,7 @@ const PostModel = require("../models/Post.model");
 const UserModel = require("../models/User.model");
 const fsPromises = require('fs').promises;
 const { checkUserId } = require("../utils/check.utils");
+const dlt = require("../utils/deleteAllThingsUser.utils");
 const { uploadPicture } = require("../utils/uploadPicture.utils");
 
 const handleError = (res, err) => {
@@ -35,6 +36,10 @@ module.exports.updateOneUser = async (req, res) => {
 
         await checkUserId(userId)
 
+        if (!req.body.bio && !req.file) {
+            throw new Error('No data provided for creating the post')
+        }
+
         let picture;
         if (req.file) {
             picture = await uploadPicture(userId, req.file)
@@ -52,45 +57,6 @@ module.exports.updateOneUser = async (req, res) => {
     }
 }
 
-const deletePicturePost = async (posts) => {
-    for (const post of posts) {
-        if (post.picture) {
-            await fsPromises.unlink(`client/public/${post.picture}`);
-        }
-    }
-}
-
-const deleteCommentsOfUser = async (userId) => {
-    await PostModel.updateMany(
-        { "comments.commenterId": userId }, // Condition for finding posts with user comments
-        { $pull: { comments: { commenterId: userId } } } // Delete user comments
-    );
-};
-
-const deleteLikesAndUnlikes = async (userId) => {
-    await PostModel.updateMany({}, { $pull: { likers: userId } });
-    await UserModel.updateMany({}, { $pull: { likes: userId } });
-}
-
-const deleteLikesOfUser = async (userPosts) => {
-    const postIdsLikedByUser = userPosts.map(post => post.id);
-    await UserModel.updateMany(
-        { likes: { $in: postIdsLikedByUser } },
-        { $pull: { likes: { $in: postIdsLikedByUser } } }
-    );
-};
-
-const deletePosts = async (userId) => {
-    await PostModel.deleteMany({ posterId: userId });
-};
-
-const deleteUserFromFollowersAndFollowing = async (userId) => {
-    await UserModel.updateMany(
-        { $or: [{ followers: userId }, { following: userId }] },
-        { $pull: { followers: userId, following: userId } }
-    );
-};
-
 module.exports.deleteOneUser = async (req, res) => {
     try {
         const userId = req.params.id;
@@ -101,12 +67,12 @@ module.exports.deleteOneUser = async (req, res) => {
         const userPosts = await PostModel.find({ posterId: userId });
 
         await Promise.all([
-            deletePicturePost(userPosts),
-            deleteCommentsOfUser(userId),
-            deleteLikesAndUnlikes(userId),
-            deletePosts(userId),
-            deleteUserFromFollowersAndFollowing(userId),
-            deleteLikesOfUser(userPosts)
+            dlt.deletePicturePost(userPosts),
+            dlt.deleteCommentsOfUser(userId),
+            dlt.deleteLikesAndUnlikes(userId),
+            dlt.deletePosts(userId),
+            dlt.deleteUserFromFollowersAndFollowing(userId),
+            dlt.deleteLikesOfUser(userPosts)
         ]);
 
         // Delete the user's profile picture if it exists and it's not the default picture
