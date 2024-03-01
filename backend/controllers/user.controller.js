@@ -2,7 +2,7 @@ const PostModel = require("../models/Post.model");
 const UserModel = require("../models/User.model");
 const fsPromises = require('fs').promises;
 const { checkUserId } = require("../utils/check.utils");
-const dlt = require("../utils/deleteAllThingsUser.utils");
+const { deleteAllUserData } = require("../utils/deleteAllUserData.utils");
 const { uploadPicture } = require("../utils/uploadPicture.utils");
 
 const handleError = (res, err) => {
@@ -12,7 +12,7 @@ const handleError = (res, err) => {
 module.exports.getAllUsers = async (req, res) => {
     try {
         const users = await UserModel.find().select('-password');
-        res.status(200).json(users)
+        res.status(200).json({ message: `Get ${users.length} users`, users })
     } catch (err) {
         handleError(res, err)
     }
@@ -75,14 +75,7 @@ module.exports.deleteOneUser = async (req, res) => {
         // Find all posts of the user
         const userPosts = await PostModel.find({ posterId: userId });
 
-        await Promise.all([
-            dlt.deletePicturePost(userPosts),
-            dlt.deleteCommentsOfUser(userId),
-            dlt.deleteLikesAndUnlikes(userId),
-            dlt.deletePosts(userId),
-            dlt.deleteUserFromFollowersAndFollowing(userId),
-            dlt.deleteLikesOfUser(userPosts)
-        ]);
+        await deleteAllUserData(userId, userPosts)
 
         // Delete the user's profile picture if it exists and it's not the default picture
         if (user.picture && user.picture !== './uploads/profil/random-user.png') {
@@ -100,8 +93,8 @@ module.exports.deleteOneUser = async (req, res) => {
 
 module.exports.follow = async (req, res) => {
     try {
-        const followerId = req.params.id;
-        const followingId = req.auth.userId;
+        const followerId = req.auth.userId;
+        const followingId = req.params.id;
 
         await checkUserId(followerId)
         await checkUserId(followingId)
@@ -133,8 +126,8 @@ module.exports.follow = async (req, res) => {
 
 module.exports.unfollow = async (req, res) => {
     try {
-        const followerId = req.params.id;
-        const followingId = req.auth.userId;
+        const followerId = req.auth.userId;
+        const followingId = req.params.id;
 
         await checkUserId(followerId)
         await checkUserId(followingId)

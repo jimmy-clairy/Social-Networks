@@ -137,7 +137,7 @@ module.exports.likePost = async (req, res) => {
             { new: true }
         ).select('pseudo likes');
 
-        res.status(200).json({ postLiked, userLiked });
+        res.status(200).json({ userLiked, postLiked });
     } catch (err) {
         res.status(500).json({ error: err.message })
     }
@@ -164,7 +164,7 @@ module.exports.unlikePost = async (req, res) => {
         ).select('pseudo likes');
 
 
-        res.status(200).json({ postLiked, userLiked });
+        res.status(200).json({ userLiked, postLiked });
     } catch (err) {
         res.status(500).json({ error: err.message })
     }
@@ -173,19 +173,21 @@ module.exports.unlikePost = async (req, res) => {
 module.exports.commentPost = async (req, res) => {
     try {
         const postId = req.params.id;
+        const userId = req.auth.userId
 
         await checkPostId(postId);
+        const user = await checkUserId(userId)
 
-        const commenterId = req.auth.userId
-        const { commenterPseudo, text } = req.body;
+        const commenterPseudo = user.pseudo
+        const text = req.body.text;
 
         // Check if all required fields are provided
-        if (!commenterId || !commenterPseudo || !text) {
-            throw new Error('Please provide commenterId, commenterPseudo, and text for the comment');
+        if (!text) {
+            throw new Error('Please provide text for the comment');
         }
 
         const newComment = {
-            commenterId,
+            commenterId: userId,
             commenterPseudo,
             text,
             timestamp: Date.now()
