@@ -13,11 +13,11 @@ module.exports.signUp = async (req, res) => {
         }
 
         if (pseudo === ADMIN_PSEUDO && !ifAdmin) {
-            return res.status(400).json({ errors: `Pseudo is reverved for Admin` })
+            return res.status(400).json({ errors: `Pseudo is reserved for Admin` })
         }
 
         if (email === ADMIN_EMAIL && !ifAdmin) {
-            return res.status(400).json({ errors: `Email is reverved for Admin` })
+            return res.status(400).json({ errors: `Email is reserved for Admin` })
         }
 
         if (password.length < 6) {
@@ -33,7 +33,9 @@ module.exports.signUp = async (req, res) => {
             ifAdmin,
             bio: ''
         });
+
         await user.save();
+
         res.status(201).json({ message: `${ifAdmin ? 'Administrateur' : 'Utilisateur'} crée !`, userId: user.id })
     } catch (err) {
         res.status(500).json({ error: err.message })
@@ -54,14 +56,14 @@ module.exports.login = async (req, res) => {
             return res.status(401).json({ error: "Paire identifiant/mot de passe incorrecte" });
         }
 
-        res.status(200).json({
-            userId: user._id,
-            token: jwt.sign(
-                { userId: user._id },
-                TOKEN_SECRET,
-                { expiresIn: '24h' })
-        });
+        // Génération du jeton JWT
+        const token = jwt.sign(
+            { userId: user.id },
+            TOKEN_SECRET,
+            { expiresIn: '24h' }
+        );
 
+        res.status(200).json({ userId: user.id, token });
     } catch (err) {
         res.status(500).json({ error: err.message })
     }
