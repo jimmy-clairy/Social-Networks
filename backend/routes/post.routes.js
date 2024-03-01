@@ -1,5 +1,6 @@
 const router = require('express').Router()
 const postController = require('../controllers/post.controller')
+const commentController = require('../controllers/comment.controller')
 const auth = require('../middlewares/auth.middleware')
 const multer = require("multer")
 const upload = multer()
@@ -16,8 +17,8 @@ router.patch('/like/:id', auth, postController.likePost)
 router.patch('/unlike/:id', auth, postController.unlikePost)
 
 // Comments
-router.patch('/comment/:id', auth, postController.commentPost)
-router.patch('/edit-comment/:id', auth, postController.editCommentPost)
-router.patch('/delete-comment/:id', auth, postController.deleteCommentPost)
+router.patch('/comment/:id', auth, commentController.commentPost)
+router.patch('/edit-comment/:id', auth, commentController.editCommentPost)
+router.patch('/delete-comment/:id', auth, commentController.deleteCommentPost)
 
 module.exports = router;
