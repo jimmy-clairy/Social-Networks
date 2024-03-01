@@ -6,13 +6,15 @@ const fsPromises = require('fs').promises;
 
 module.exports.createOnePost = async (req, res) => {
     try {
-        const { posterId, message, video } = req.body
+        const posterId = req.auth.userId
+        const { message, video } = req.body
+        const file = req.file
 
         await checkUserId(posterId)
 
         let picture;
-        if (req.file) {
-            picture = await uploadPicture(posterId, req.file, 'post')
+        if (file) {
+            picture = await uploadPicture(posterId, file, 'post')
         }
 
         if (!message && !video && !picture) {
@@ -63,6 +65,10 @@ module.exports.deleteOnePost = async (req, res) => {
 
         const post = await checkPostId(postId)
 
+        if (post.posterId !== req.auth.userId) {
+            throw new Error('Unauthorized: You are not allowed to delete this post.')
+        }
+
         // If the post has a picture, delete it
         if (post.picture) {
             await fsPromises.unlink(`client/public/${post.picture}`);
@@ -82,6 +88,10 @@ module.exports.updateOnePost = async (req, res) => {
         const { message, video } = req.body;
 
         const post = await checkPostId(postId);
+
+        if (post.posterId !== req.auth.userId) {
+            throw new Error('Unauthorized: You are not allowed to update this post.')
+        }
 
         if (!message && !video && !req.file) {
             throw new Error('No data provided for creating the post')
@@ -110,7 +120,7 @@ module.exports.updateOnePost = async (req, res) => {
 module.exports.likePost = async (req, res) => {
     try {
         const postId = req.params.id
-        const userId = req.body.id
+        const userId = req.auth.userId
 
         await checkPostId(postId)
         await checkUserId(userId)
@@ -136,7 +146,7 @@ module.exports.likePost = async (req, res) => {
 module.exports.unlikePost = async (req, res) => {
     try {
         const postId = req.params.id
-        const userId = req.body.id
+        const userId = req.auth.userId
 
         await checkPostId(postId)
         await checkUserId(userId)
@@ -166,7 +176,8 @@ module.exports.commentPost = async (req, res) => {
 
         await checkPostId(postId);
 
-        const { commenterId, commenterPseudo, text } = req.body;
+        const commenterId = req.auth.userId
+        const { commenterPseudo, text } = req.body;
 
         // Check if all required fields are provided
         if (!commenterId || !commenterPseudo || !text) {
@@ -212,9 +223,12 @@ module.exports.editCommentPost = async (req, res) => {
             return res.status(400).json({ error: `Comment not found` });
         }
 
+        if (comment.commenterId !== req.auth.userId) {
+            return res.status(401).json({ error: `Unauthorized: You are not allowed to update this comment.` });
+        }
+
         // Update the text of the comment
         comment.text = newText;
-
         await post.save();
 
         res.status(202).json({ message: 'Comment updated successfully', updatedComment: comment });
@@ -231,9 +245,13 @@ module.exports.deleteCommentPost = async (req, res) => {
         const post = await checkPostId(postId);
 
         // Check if the comment exists in the post
-        const commentExists = post.comments.some(comment => comment._id.equals(commentId));
-        if (!commentExists) {
+        const comment = post.comments.find(comment => comment._id.equals(commentId));
+        if (!comment) {
             return res.status(400).json({ error: `Comment not found` });
+        }
+
+        if (comment.commenterId !== req.auth.userId) {
+            return res.status(401).json({ error: `Unauthorized: You are not allowed to delete this comment.` });
         }
 
         // Remove the comment from the post

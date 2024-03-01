@@ -33,16 +33,21 @@ module.exports.getOneUser = async (req, res) => {
 module.exports.updateOneUser = async (req, res) => {
     try {
         const userId = req.params.id
+        const file = req.file
 
-        await checkUserId(userId)
+        const user = await checkUserId(userId)
+
+        if (user.id !== req.auth.userId) {
+            throw new Error('Unauthorized: You are not allowed to update this user.')
+        }
 
         if (!req.body.bio && !req.file) {
             throw new Error('No data provided for creating the post')
         }
 
         let picture;
-        if (req.file) {
-            picture = await uploadPicture(userId, req.file)
+        if (file) {
+            picture = await uploadPicture(userId, file)
         }
 
         const userUpdated = await UserModel.findByIdAndUpdate(
@@ -62,6 +67,10 @@ module.exports.deleteOneUser = async (req, res) => {
         const userId = req.params.id;
 
         const user = await checkUserId(userId);
+
+        if (user.id !== req.auth.userId) {
+            throw new Error('Unauthorized: You are not allowed to delete this user.')
+        }
 
         // Find all posts of the user
         const userPosts = await PostModel.find({ posterId: userId });
@@ -92,7 +101,7 @@ module.exports.deleteOneUser = async (req, res) => {
 module.exports.follow = async (req, res) => {
     try {
         const followerId = req.params.id;
-        const followingId = req.body.id;
+        const followingId = req.auth.userId;
 
         await checkUserId(followerId)
         await checkUserId(followingId)
@@ -125,7 +134,7 @@ module.exports.follow = async (req, res) => {
 module.exports.unfollow = async (req, res) => {
     try {
         const followerId = req.params.id;
-        const followingId = req.body.id;
+        const followingId = req.auth.userId;
 
         await checkUserId(followerId)
         await checkUserId(followingId)

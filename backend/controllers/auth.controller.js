@@ -3,8 +3,6 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const { TOKEN_SECRET } = process.env;
 
-const maxAge = 3 * 24 * 60 * 60 * 1000
-
 module.exports.signUp = async (req, res) => {
     try {
         const { pseudo, email, password } = req.body
@@ -33,28 +31,24 @@ module.exports.login = async (req, res) => {
         const { email, password } = req.body
 
         const user = await UserModel.findOne({ email: email });
-
         if (!user) {
             return res.status(401).json({ error: "Paire identifiant/mot de passe incorrecte" });
         }
 
         const passwordIfValid = await bcrypt.compare(password, user.password);
-
         if (!passwordIfValid) {
             return res.status(401).json({ error: "Paire identifiant/mot de passe incorrecte" });
         }
 
-        const token = jwt.sign({ id: user._id }, TOKEN_SECRET, { expiresIn: maxAge })
+        res.status(200).json({
+            userId: user._id,
+            token: jwt.sign(
+                { userId: user._id },
+                TOKEN_SECRET,
+                { expiresIn: '24h' })
+        });
 
-        res.cookie('jwt', token, { httpOnly: true, maxAge, secure: true })
-
-        res.status(200).json({ user: user._id })
     } catch (err) {
         res.status(500).json({ error: err.message })
     }
-}
-
-module.exports.logout = (req, res) => {
-    res.cookie('jwt', '', { maxAge: 1 })
-    res.redirect('/')
 }
