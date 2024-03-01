@@ -68,7 +68,8 @@ module.exports.deleteOneUser = async (req, res) => {
 
         const user = await checkUserId(userId);
 
-        if (user.id !== req.auth.userId) {
+        const userAuth = await checkUserId(req.auth.userId);
+        if (!userAuth.ifAdmin && user.id !== userAuth) {
             throw new Error('Unauthorized: You are not allowed to delete this user.')
         }
 

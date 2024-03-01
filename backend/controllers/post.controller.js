@@ -65,8 +65,9 @@ module.exports.deleteOnePost = async (req, res) => {
 
         const post = await checkPostId(postId)
 
-        if (post.posterId !== req.auth.userId) {
-            throw new Error('Unauthorized: You are not allowed to delete this post.')
+        const userAuth = await checkUserId(req.auth.userId);
+        if (!userAuth.ifAdmin && post.posterId !== req.auth.userId) {
+            return res.status(401).json({ error: `Unauthorized: You are not allowed to delete this post.` })
         }
 
         // If the post has a picture, delete it
@@ -252,8 +253,9 @@ module.exports.deleteCommentPost = async (req, res) => {
             return res.status(400).json({ error: `Comment not found` });
         }
 
-        if (comment.commenterId !== req.auth.userId) {
-            return res.status(401).json({ error: `Unauthorized: You are not allowed to delete this comment.` });
+        const userAuth = await checkUserId(req.auth.userId);
+        if (!userAuth.ifAdmin && comment.commenterId !== req.auth.userId) {
+            return res.status(401).json({ error: `Unauthorized: You are not allowed to delete this comment.` })
         }
 
         // Remove the comment from the post

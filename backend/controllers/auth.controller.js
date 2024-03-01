@@ -34,7 +34,7 @@ module.exports.signUp = async (req, res) => {
             bio: ''
         });
         await user.save();
-        res.status(201).json({ message: `${ifAdmin ? 'Adimnistrateur' : 'Utilisateur'} created !`, userId: user })
+        res.status(201).json({ message: `${ifAdmin ? 'Administrateur' : 'Utilisateur'} crée !`, userId: user.id })
     } catch (err) {
         res.status(500).json({ error: err.message })
     }
