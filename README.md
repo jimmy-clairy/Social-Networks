@@ -16,6 +16,15 @@ _____________________________
 
    - PORT=5000 `port localhost`
 
+   - CLIENT_URL="http://localhost:3000" `Votre port client`
+   
    - DB_USER_PASS='`Votre identifiant et mot de passe MongoDB`'
+
+   - DB_NAME='`Votre nom base de donnée MongoDB`'
+
+   - TOKEN_SECRET='`Votre token secret`'
+
+   - ADMIN_PSEUDO='`Votre pseudo d'Administrateur`'
+   - ADMIN_EMAIL='`Votre email d'Administrateur`'
 
 * Démarrer le server : `npm start`
