@@ -31,7 +31,13 @@ module.exports.uploadPicture = async (userId, file, type = 'profile', maxSizeFil
     await fsPromises.mkdir(destinationFolder, { recursive: true });
 
     // Set file name
-    const fileName = modifWithSameFileName ? modifWithSameFileName.replace('./uploads/post/', '') : `${userId}${type === 'post' ? Date.now() : ''}.jpg`;
+    let fileName;
+    if (modifWithSameFileName) {
+        fileName = modifWithSameFileName.replace(`./uploads/${type}/`, '');
+    } else {
+        const timestamp = type === 'post' ? Date.now() : '';
+        fileName = `${userId}${timestamp}.jpg`;
+    }
 
     // Write file to destination
     const destinationPath = `${destinationFolder}/${fileName}`;
