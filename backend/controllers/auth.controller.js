@@ -1,11 +1,24 @@
 const UserModel = require('../models/User.model.js');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const { TOKEN_SECRET } = process.env;
+const { TOKEN_SECRET, ADMIN_PSEUDO, ADMIN_EMAIL } = process.env;
 
 module.exports.signUp = async (req, res) => {
     try {
         const { pseudo, email, password } = req.body
+        let ifAdmin = false;
+
+        if (pseudo === ADMIN_PSEUDO && email === ADMIN_EMAIL) {
+            ifAdmin = true
+        }
+
+        if (pseudo === ADMIN_PSEUDO && !ifAdmin) {
+            return res.status(400).json({ errors: `Pseudo is reverved for Admin` })
+        }
+
+        if (email === ADMIN_EMAIL && !ifAdmin) {
+            return res.status(400).json({ errors: `Email is reverved for Admin` })
+        }
 
         if (password.length < 6) {
             return res.status(400).json({ errors: `Le mot de passe doit comporter plus de 6 caractères. Actuellement, vous avez ${password.length} caractères.` })
@@ -17,10 +30,11 @@ module.exports.signUp = async (req, res) => {
             pseudo: pseudo,
             email: email,
             password: hash,
+            ifAdmin,
             bio: ''
         });
         await user.save();
-        res.status(201).json({ message: "Utilisateur créé !", userId: user._id })
+        res.status(201).json({ message: `${ifAdmin ? 'Adimnistrateur' : 'Utilisateur'} created !`, userId: user })
     } catch (err) {
         res.status(500).json({ error: err.message })
     }
