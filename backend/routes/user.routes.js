@@ -11,8 +11,8 @@ router.post("/signup", authController.signUp)
 router.post("/login", authController.login)
 
 // User 
-router.get("/", auth, userController.getAllUsers)
-router.get("/:id", auth, userController.getOneUser)
+router.get("/", userController.getAllUsers)
+router.get("/:id", userController.getOneUser)
 router.put("/:id", auth, upload.single("file"), userController.updateOneUser)
 router.delete("/:id", auth, userController.deleteOneUser)
 
