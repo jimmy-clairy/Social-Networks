@@ -72,7 +72,7 @@ module.exports.deleteOnePost = async (req, res) => {
 
         // If the post has a picture, delete it
         if (post.picture) {
-            await fsPromises.unlink(`client/public/${post.picture}`);
+            await fsPromises.unlink(`../frontend/public/${post.picture}`);
         }
 
         await PostModel.findByIdAndDelete(postId)
