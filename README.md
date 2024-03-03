@@ -24,6 +24,8 @@ _____________________________
 
    - TOKEN_SECRET='`Votre token secret`'
 
+   - PATH_PICTURE='`../frontend/public/uploads`'
+
    - ADMIN_PSEUDO='`Votre pseudo d'Administrateur`'
    - ADMIN_EMAIL='`Votre email d'Administrateur`'
 
