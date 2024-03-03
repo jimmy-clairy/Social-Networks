@@ -10,7 +10,7 @@ module.exports.createOnePost = async (req, res) => {
         const { message, video } = req.body
         const file = req.file
 
-        await checkUserId(posterId)
+        const user = await checkUserId(posterId)
 
         let picture;
         if (file) {
@@ -23,6 +23,7 @@ module.exports.createOnePost = async (req, res) => {
 
         const newPost = new PostModel({
             posterId,
+            posterPseudo: user.pseudo,
             message,
             video,
             picture

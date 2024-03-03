@@ -7,6 +7,10 @@ const postSchema = mongoose.Schema(
             type: String,
             required: true
         },
+        posterPseudo: {
+            type: String,
+            required: true
+        },
         message: {
             type: String,
             trim: true,
