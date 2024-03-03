@@ -10,7 +10,7 @@ const deletePicturePost = async (posts) => {
     try {
         for (const post of posts) {
             if (post.picture) {
-                await fsPromises.unlink(`client/public/${post.picture}`);
+                await fsPromises.unlink(`${process.env.PATH_PICTURE}/${post.picture}`);
             }
         }
     } catch (error) {

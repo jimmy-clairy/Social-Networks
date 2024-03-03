@@ -27,13 +27,13 @@ module.exports.uploadPicture = async (userId, file, type = 'profile', maxSizeFil
     }
 
     // Create destination folder if it doesn't exist
-    const destinationFolder = `${__dirname}/../../frontend/public/uploads/${type}`;
+    const destinationFolder = `${process.env.PATH_PICTURE}/${type}`;
     await fsPromises.mkdir(destinationFolder, { recursive: true });
 
     // Set file name
     let fileName;
     if (modifWithSameFileName) {
-        fileName = modifWithSameFileName.replace(`./uploads/${type}/`, '');
+        fileName = modifWithSameFileName.replace(`./${type}/`, '');
     } else {
         const timestamp = type === 'post' ? Date.now() : '';
         fileName = `${userId}${timestamp}.jpg`;
@@ -44,5 +44,5 @@ module.exports.uploadPicture = async (userId, file, type = 'profile', maxSizeFil
     await fsPromises.writeFile(destinationPath, buffer);
 
     // Return path to the uploaded picture
-    return `./uploads/${type}/${fileName}`;
+    return `./${type}/${fileName}`;
 };
