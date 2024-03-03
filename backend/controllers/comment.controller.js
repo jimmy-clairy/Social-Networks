@@ -42,6 +42,7 @@ module.exports.editCommentPost = async (req, res) => {
         const postId = req.params.id;
         const newText = req.body.text;
         const commentId = req.body.commentId;
+        const userId = req.auth.userId;
 
         const post = await checkPostId(postId);
 
@@ -56,7 +57,7 @@ module.exports.editCommentPost = async (req, res) => {
             return res.status(400).json({ error: `Comment not found` });
         }
 
-        if (comment.commenterId !== req.auth.userId) {
+        if (comment.commenterId !== userId) {
             return res.status(401).json({ error: `Unauthorized: You are not allowed to update this comment.` });
         }
 
@@ -74,6 +75,7 @@ module.exports.deleteCommentPost = async (req, res) => {
     try {
         const postId = req.params.id;
         const commentId = req.body.commentId;
+        const userId = req.auth.userId;
 
         const post = await checkPostId(postId);
 
@@ -83,8 +85,8 @@ module.exports.deleteCommentPost = async (req, res) => {
             return res.status(400).json({ error: `Comment not found` });
         }
 
-        const userAuth = await checkUserId(req.auth.userId);
-        if (!userAuth.ifAdmin && comment.commenterId !== req.auth.userId) {
+        const user = await checkUserId(userId);
+        if (!user.ifAdmin && comment.commenterId !== userId) {
             return res.status(401).json({ error: `Unauthorized: You are not allowed to delete this comment.` })
         }
 
