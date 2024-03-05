@@ -1,6 +1,8 @@
 # Upload Picture
 public/uploads
-
+icons
+# Other Style
+other-style
 # Logs
 logs
 *.log
