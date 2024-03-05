@@ -1,7 +1,17 @@
+import { BrowserRouter, Routes, Route } from "react-router-dom"
+import Connect from "./pages/Connect"
+import Home from "./pages/Home"
+
 function App() {
   return (
     <>
-      <h1>Social Networks</h1>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Connect />} />
+          <Route path="/home" element={<Home />} />
+          <Route path="*" element={<Connect />} />
+        </Routes>
+      </BrowserRouter>
     </>
   )
 }
