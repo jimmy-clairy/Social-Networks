@@ -4,24 +4,36 @@ const bcrypt = require('bcrypt');
 const { TOKEN_SECRET, ADMIN_PSEUDO, ADMIN_EMAIL } = process.env;
 
 module.exports.signUp = async (req, res) => {
+    const errors = {
+        pseudo: '',
+        email: '',
+        password: ''
+    }
+
     try {
         const { pseudo, email, password } = req.body
         let ifAdmin = false;
+
+        const checkIfPseudoExists = await UserModel.findOne({ pseudo: pseudo });
+        if (checkIfPseudoExists) {
+            errors.pseudo = `Le pseudo ${pseudo} est déjà utilisé.`
+        }
+
+        const checkIfEmailExists = await UserModel.findOne({ email: email });
+        if (checkIfEmailExists) {
+            errors.email = `L'email ${email} est déjà utilisé.`;
+        }
+
+        if (password.length < 6) {
+            errors.password = `Le mot de passe doit comporter plus de 6 caractères. Actuellement, vous avez ${password.length} caractères.`
+        }
 
         if (pseudo === ADMIN_PSEUDO && email === ADMIN_EMAIL) {
             ifAdmin = true
         }
 
-        if (pseudo === ADMIN_PSEUDO && !ifAdmin) {
-            return res.status(400).json({ errors: `Pseudo is reserved for Admin` })
-        }
-
-        if (email === ADMIN_EMAIL && !ifAdmin) {
-            return res.status(400).json({ errors: `Email is reserved for Admin` })
-        }
-
-        if (password.length < 6) {
-            return res.status(400).json({ errors: `Le mot de passe doit comporter plus de 6 caractères. Actuellement, vous avez ${password.length} caractères.` })
+        if (Object.keys(errors).length !== 0) {
+            return res.status(400).json({ errors })
         }
 
         const hash = await bcrypt.hash(password, 10);
@@ -38,7 +50,7 @@ module.exports.signUp = async (req, res) => {
 
         res.status(201).json({ message: `${ifAdmin ? 'Administrateur' : 'Utilisateur'} crée !`, userId: user.id })
     } catch (err) {
-        res.status(500).json({ error: err.message })
+        res.status(500).json(err)
     }
 }
 
