@@ -4,11 +4,7 @@ const bcrypt = require('bcrypt');
 const { TOKEN_SECRET, ADMIN_PSEUDO, ADMIN_EMAIL } = process.env;
 
 module.exports.signUp = async (req, res) => {
-    const errors = {
-        pseudo: '',
-        email: '',
-        password: ''
-    }
+    const errors = {}
 
     try {
         const { pseudo, email, password } = req.body
