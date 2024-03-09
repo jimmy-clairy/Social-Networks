@@ -71,7 +71,7 @@ module.exports.login = async (req, res) => {
             { expiresIn: '24h' }
         );
 
-        res.status(200).json({ userId: user.id, token });
+        res.status(200).json({ userId: user.id, pseudo: user.pseudo, token });
     } catch (err) {
         res.status(500).json({ error: err.message })
     }
