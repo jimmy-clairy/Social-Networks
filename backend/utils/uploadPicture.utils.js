@@ -44,5 +44,5 @@ module.exports.uploadPicture = async (userId, file, type = 'profile', maxSizeFil
     await fsPromises.writeFile(destinationPath, buffer);
 
     // Return path to the uploaded picture
-    return `./${type}/${fileName}`;
+    return `${type}/${fileName}`;
 };

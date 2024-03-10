@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { InfoContext } from '../../Context/InfoContext'
 import fetchData from "../../utils/fetchData";
 import { URL_API_LOGIN } from "../../utils/url_api";
 import { useNavigate } from "react-router-dom";
 
 export default function SignInForm() {
+    const { setUserInfoCTX } = useContext(InfoContext)
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -25,6 +27,7 @@ export default function SignInForm() {
             const data = await fetchData(url, options);
 
             localStorage.setItem("token", JSON.stringify(data.token));
+            setUserInfoCTX(data.user)
 
             navigate("/");
         } catch (error) {
@@ -35,8 +38,8 @@ export default function SignInForm() {
 
     return (
         <form onSubmit={handleLogin} id="sign-up-form">
+
             <label htmlFor="email">Email</label>
-            <br />
             <input
                 id="email"
                 onChange={(e) => { setEmail(e.target.value), setError('') }}
@@ -46,9 +49,8 @@ export default function SignInForm() {
                 name="email"
             />
             <div className="email error">{error}</div>
-            <br />
+
             <label htmlFor="password">Password</label>
-            <br />
             <input
                 id="password"
                 onChange={(e) => { setPassword(e.target.value), setError('') }}
@@ -58,7 +60,7 @@ export default function SignInForm() {
                 name="password"
             />
             <div className="password error">{error}</div>
-            <br />
+
             <input type="submit" value="Se connecter" />
         </form>
     );

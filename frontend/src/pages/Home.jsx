@@ -1,36 +1,30 @@
-import { useEffect } from "react"
+import { useEffect, useContext, useState } from "react"
+import { InfoContext } from '../Context/InfoContext'
 import { URL_API_GET_POSTS } from "../utils/url_api";
 import fetchData from "../utils/fetchData";
+import Cards from "../components/Cards";
 
 export default function Home() {
-    const token = JSON.parse(localStorage.getItem('token'))
-
+    const { setPostsCTX } = useContext(InfoContext)
+    const [posts, setPosts] = useState([])
     useEffect(() => {
-
-        async function fetchPost(params) {
-            try {
-                const url = URL_API_GET_POSTS;
-                console.log(url);
-                const options = {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        // 'Authorization': `Bearer ${token}`,
-                    },
-
-                    // body: JSON.stringify(user)
-                };
-                const data = await fetchData(url, options);
-                console.log(data);
-            } catch (error) {
-                console.log(error);
-            }
-
+        async function getPosts() {
+            const url = URL_API_GET_POSTS;
+            const options = {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' }
+            };
+            const data = await fetchData(url, options);
+            setPostsCTX(data.posts)
+            setPosts(data.posts)
         }
-        fetchPost()
+        getPosts()
     }, [])
 
     return (
-        <div className=" bg-red-200">Home</div>
+        <div className="home">
+            home
+            {posts.map((item) => <Cards key={item._id} item={item} />)}
+        </div>
     )
 }
