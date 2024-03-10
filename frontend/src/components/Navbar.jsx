@@ -35,7 +35,9 @@ export default function Navbar() {
                             </NavLink>
                         </li>
                         <li>
-                            <img src="./img/icons/login.svg" alt="login" />
+                            <NavLink to='/profil'>
+                                <img src="./img/icons/login.svg" alt="login" />
+                            </NavLink>
                         </li>
                     </ul>}
             </div>

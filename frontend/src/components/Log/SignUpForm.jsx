@@ -1,5 +1,5 @@
 import { useState, useContext } from "react";
-import { InfoContext } from '../../Context/InfoContext'
+import { InfoContext } from '../../Context/InfoContext';
 import fetchData from "../../utils/fetchData"
 import { useNavigate } from "react-router-dom";
 import { URL_API_LOGIN, URL_API_SIGNUP } from "../../utils/url_api"
@@ -56,7 +56,6 @@ export default function SignUpForm() {
                 const user = { pseudo, email, password }
 
                 const data = await signUp(user)
-                console.log(data);
 
                 if (data.errors) {
                     return setErrors({ ...errors, pseudo: data.errors.pseudo, email: data.errors.email, password: data.errors.password })
@@ -65,8 +64,8 @@ export default function SignUpForm() {
                 const userData = await login(user)
 
                 localStorage.setItem("token", JSON.stringify(userData.token));
-                setUserInfoCTX(userData.user)
 
+                setUserInfoCTX({ _id: userData.userId })
                 navigate("/")
             }
 

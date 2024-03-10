@@ -5,12 +5,10 @@ export const InfoContext = createContext()
 
 const InfoContextProvider = (props) => {
     const [userInfoCTX, setUserInfoCTX] = useState({})
-    const [postsCTX, setPostsCTX] = useState([])
     console.log(userInfoCTX);
-    console.log(postsCTX);
 
     return (
-        <InfoContext.Provider value={{ userInfoCTX, setUserInfoCTX, postsCTX, setPostsCTX }}>
+        <InfoContext.Provider value={{ userInfoCTX, setUserInfoCTX }}>
             {props.children}
         </InfoContext.Provider>
     )

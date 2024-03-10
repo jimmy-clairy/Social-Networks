@@ -1,6 +1,6 @@
 import { useState } from "react"
 import SignUpForm from "./SignUpForm"
-import SignInFrom from "./SignInForm"
+import LoginForm from "./LoginForm"
 
 export default function Log({ signIn }) {
 
@@ -19,7 +19,7 @@ export default function Log({ signIn }) {
                         onClick={() => setLogModal(false)}>Se connecter
                     </li>
                 </ul>
-                {logModal ? <SignUpForm /> : <SignInFrom />}
+                {logModal ? <SignUpForm /> : <LoginForm />}
             </div>
         </div>
     )
