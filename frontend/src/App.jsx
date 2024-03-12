@@ -1,15 +1,22 @@
-import Routes from "./Routes"
+import { BrowserRouter, Routes, Route } from "react-router-dom"
+import Navbar from "./components/Navbar";
+import Home from "./pages/Home";
+import Profil from "./pages/Profil";
+import Trending from "./pages/Trending";
 
 function App() {
   console.log('App');
-  const token = JSON.parse(localStorage.getItem('token'))
-  const userId = JSON.parse(localStorage.getItem('userId'))
-  console.log(token, userId);
 
   return (
-    <>
-      <Routes />
-    </>
+    <BrowserRouter>
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/profil" element={<Profil />} />
+        <Route path="/trending" element={<Trending />} />
+        <Route path="*" element={<Home />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 
