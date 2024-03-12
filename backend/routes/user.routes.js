@@ -12,7 +12,7 @@ router.post("/login", authController.login)
 
 // User 
 router.get("/", userController.getAllUsers)
-router.get("/:id", userController.getOneUser)
+router.get("/:id", auth, userController.getOneUser)
 router.put("/:id", auth, upload.single("file"), userController.updateOneUser)
 router.delete("/:id", auth, userController.deleteOneUser)
 
