@@ -1,11 +1,9 @@
-import { useState, useContext } from "react";
-import { InfoContext } from '../../Context/InfoContext';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import fetchData from "../../utils/fetchData";
 import { URL_API_LOGIN } from "../../utils/url_api";
-import { useNavigate } from "react-router-dom";
 
 export default function Login() {
-    const { setUserInfoCTX } = useContext(InfoContext)
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -27,8 +25,7 @@ export default function Login() {
             const data = await fetchData(url, options);
 
             localStorage.setItem("token", JSON.stringify(data.token));
-
-            setUserInfoCTX({ _id: data.userId })
+            localStorage.setItem("userId", JSON.stringify(data.userId));
 
             navigate("/");
         } catch (error) {

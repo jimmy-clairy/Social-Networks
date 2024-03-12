@@ -1,16 +1,15 @@
-import { useContext } from "react";
-import { InfoContext } from '../../Context/InfoContext'
 import { useNavigate } from "react-router-dom";
 
 export default function Logout() {
-    const { setUserInfoCTX } = useContext(InfoContext)
+    console.log('Logout');
     const navigate = useNavigate();
 
     function logout() {
         localStorage.removeItem('token')
-        setUserInfoCTX({})
+        localStorage.removeItem('userId')
         navigate('./profil')
     }
+
     return (
         <li>
             <img onClick={logout} src="./img/icons/logout.svg" alt="logout" />

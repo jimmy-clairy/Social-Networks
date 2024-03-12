@@ -1,11 +1,10 @@
-import { useContext } from "react";
-import { InfoContext } from '../Context/InfoContext';
 import { NavLink } from "react-router-dom";
 import Logout from "./Log/Logout";
 
 export default function Navbar() {
+    console.log('NavBar');
     const token = localStorage.getItem('token')
-    const { userInfoCTX } = useContext(InfoContext)
+
 
     return (
         <nav>
@@ -22,7 +21,7 @@ export default function Navbar() {
                     <li></li>
                     <li className="welcome">
                         <NavLink to='/profil'>
-                            <h5 style={{ color: userInfoCTX?.ifAdmin ? 'crimson' : 'green' }}>Bienvenue {userInfoCTX?.pseudo}</h5>
+                            <h5>Bienvenue 'Dynamic'</h5>
                         </NavLink>
                     </li>
                     <Logout />

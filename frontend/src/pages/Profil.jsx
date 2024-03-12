@@ -1,12 +1,14 @@
 import Log from '../components/Log/Auth'
+import UpdateProfil from '../components/Profil/UpdateProfil'
 
 export default function Profil() {
+    console.log('profil');
     const token = JSON.parse(localStorage.getItem('token'))
 
     return (
         <div className="profil-page">
 
-            {token ? <h1>UPDATE PAGE</h1> :
+            {token ? <UpdateProfil /> :
 
                 <div className="log-container">
                     <Log signIn={true} />
