@@ -2,7 +2,7 @@ import Log from '../components/Log/Auth'
 import UpdateProfil from '../components/Profil/UpdateProfil'
 
 export default function Profil() {
-    console.log('profil');
+    console.log('Profil');
     const token = JSON.parse(localStorage.getItem('token'))
 
     return (
