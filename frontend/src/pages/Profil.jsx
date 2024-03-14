@@ -1,5 +1,5 @@
-import Log from '../components/Log/Auth'
-import UpdateProfil from '../components/Profil/UpdateProfil'
+import Log from '../components/log/Auth'
+import UpdateProfil from '../components/profil/UpdateProfil'
 
 export default function Profil() {
     console.log('Profil');

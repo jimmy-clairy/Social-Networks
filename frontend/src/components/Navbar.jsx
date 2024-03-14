@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import Logout from "./Log/Logout";
+import Logout from "./log/Logout";
 
 export default function Navbar() {
     console.log('NavBar');
