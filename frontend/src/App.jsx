@@ -6,7 +6,6 @@ import Trending from "./pages/Trending";
 
 function App() {
   console.log('App');
-
   return (
     <BrowserRouter>
       <Navbar />
