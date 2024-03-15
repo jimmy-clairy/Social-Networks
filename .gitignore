@@ -2,6 +2,8 @@
 public/uploads
 icons
 img
+.env
+
 # Other Style
 other-style
 # Logs
