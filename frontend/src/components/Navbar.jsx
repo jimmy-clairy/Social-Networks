@@ -1,10 +1,10 @@
 import { NavLink } from "react-router-dom";
 import Logout from "./log/Logout";
+import { useSelector } from "react-redux";
 
 export default function Navbar() {
-    console.log('NavBar');
     const token = localStorage.getItem('token')
-
+    const userData = useSelector((state) => state.userReducer)
 
     return (
         <nav>
@@ -17,15 +17,17 @@ export default function Navbar() {
                         </div>
                     </NavLink>
                 </div>
-                {token ? <ul>
-                    <li></li>
-                    <li className="welcome">
-                        <NavLink to='/profil'>
-                            <h5>Bienvenue 'Dynamic'</h5>
-                        </NavLink>
-                    </li>
-                    <Logout />
-                </ul> :
+                {token ?
+                    <ul>
+                        <li></li>
+                        <li className="welcome">
+                            <NavLink to='/profil'>
+                                <h5>Bienvenue {userData.pseudo}</h5>
+                            </NavLink>
+                        </li>
+                        <Logout />
+                    </ul>
+                    :
                     <ul>
                         <li></li>
                         <li>
@@ -38,7 +40,8 @@ export default function Navbar() {
                                 <img src="./img/icons/login.svg" alt="login" />
                             </NavLink>
                         </li>
-                    </ul>}
+                    </ul>
+                }
             </div>
         </nav>
     )

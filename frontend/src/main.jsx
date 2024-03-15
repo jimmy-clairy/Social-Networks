@@ -7,12 +7,22 @@ import App from './App'
 import { Provider } from 'react-redux'
 import { configureStore } from '@reduxjs/toolkit'
 import rootReducer from "./reducers"
+import { getPosts } from './actions/post.actions'
+import { getUser } from './actions/user.actions'
 
 const store = configureStore({
   reducer: rootReducer,
   devTools: true,
 })
 
+const userId = JSON.parse(localStorage.getItem('userId'))
+const token = JSON.parse(localStorage.getItem('token'))
+
+if (userId && token) {
+  store.dispatch(getUser(userId, token));
+}
+
+store.dispatch(getPosts());
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <Provider store={store}>

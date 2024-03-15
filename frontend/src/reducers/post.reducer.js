@@ -1,5 +1,12 @@
-const initialState = { post: "I'm the best" }
+import { GET_POSTS } from "../actions/post.actions";
+
+const initialState = {}
 
 export default function postReducer(state = initialState, action) {
-    return state
+    switch (action.type) {
+        case GET_POSTS:
+            return action.payload;
+        default:
+            return state;
+    }
 }
