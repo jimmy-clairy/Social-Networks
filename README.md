@@ -16,7 +16,7 @@ _____________________________
 
    - PORT=5000 `port localhost`
 
-   - CLIENT_URL="http://localhost:3000" `Votre port client`
+   - CLIENT_URL="http://localhost:5173" `Votre port client`
    
    - DB_USER_PASS='`Votre identifiant et mot de passe MongoDB`'
 
