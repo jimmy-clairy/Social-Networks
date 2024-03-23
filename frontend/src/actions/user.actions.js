@@ -1,4 +1,5 @@
 export const GET_USER = "GET_USER"
+export const PUT_USER = "PUT_USER"
 
 export const getUser = (userId, token) => {
 
@@ -24,3 +25,22 @@ export const getUser = (userId, token) => {
         }
     }
 }
+
+export const putUser = (userId, token, formData) => {
+    return async (dispatch) => {
+        try {
+            const options = {
+                method: 'PUT',
+                headers: { 'Authorization': `Bearer ${token}` },
+                body: formData
+            };
+            const response = await fetch(`http://localhost:5000/api/user/${userId}`, options);
+            const data = await response.json();
+            console.log(data);
+            dispatch({ type: PUT_USER, payload: data });
+        } catch (error) {
+            console.error("Error fetching user:", error);
+            throw error;
+        }
+    };
+};
