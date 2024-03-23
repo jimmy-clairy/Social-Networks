@@ -14,7 +14,7 @@ const { checkFileFormat, checkFileSize } = require("./check.utils");
  * @returns {Promise<string>} A Promise that resolves with the path to the uploaded picture.
  * @throws {Error} If the file format is incompatible or the file size exceeds the maximum allowed size.
  */
-module.exports.uploadPicture = async (userId, file, type = 'profile', maxSizeFileKB = 500, modifWithSameFileName) => {
+module.exports.uploadPicture = async (userId, file, type = 'profil', maxSizeFileKB = 500, modifWithSameFileName) => {
     const { size, mimetype, buffer } = file;
 
     // Check file format and size
@@ -44,5 +44,5 @@ module.exports.uploadPicture = async (userId, file, type = 'profile', maxSizeFil
     await fsPromises.writeFile(destinationPath, buffer);
 
     // Return path to the uploaded picture
-    return `${type}/${fileName}`;
+    return `./uploads/${type}/${fileName}`;
 };
