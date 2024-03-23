@@ -24,7 +24,7 @@ export const loginUser = (user) => {
             setLocal('token', token)
 
             dispatch({ type: LOGIN_USER, payload: { userId, token } })
-            return data
+            return { userId, token }
         } catch (error) {
             console.error("Error fetching user:", error);
             throw error
