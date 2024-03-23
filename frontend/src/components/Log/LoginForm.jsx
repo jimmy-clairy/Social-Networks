@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import fetchData from "../../utils/fetchData";
-import { URL_API_LOGIN } from "../../utils/url_api";
+import { useDispatch } from "react-redux";
+import { loginUser } from "../../actions/auth.actions";
 
 export default function Login() {
+    const dispatch = useDispatch()
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -15,17 +17,7 @@ export default function Login() {
         try {
             const user = { email, password };
 
-            const url = URL_API_LOGIN;
-            const options = {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(user)
-            };
-
-            const data = await fetchData(url, options);
-
-            localStorage.setItem("token", JSON.stringify(data.token));
-            localStorage.setItem("userId", JSON.stringify(data.userId));
+            await dispatch(loginUser(user))
 
             navigate("/");
         } catch (error) {

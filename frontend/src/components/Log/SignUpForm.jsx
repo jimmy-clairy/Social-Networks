@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import fetchData from "../../utils/fetchData";
-import { URL_API_LOGIN, URL_API_SIGNUP } from "../../utils/url_api";
+import { URL_LOGIN, URL_SIGNUP } from "../../utils/url_api";
+import { setLocal } from "../../utils/localStorage";
+import { useDispatch } from "react-redux";
+import { loginUser } from "../../actions/auth.actions";
 
 async function apiRequest(url, user) {
     const options = {
@@ -13,6 +16,8 @@ async function apiRequest(url, user) {
 }
 
 export default function SignUpForm() {
+    const navigate = useNavigate();
+    const dispatch = useDispatch()
     const [pseudo, setPseudo] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -26,7 +31,6 @@ export default function SignUpForm() {
         check: ''
     });
 
-    const navigate = useNavigate();
 
     const handleSignUp = async (e) => {
         e.preventDefault();
@@ -38,13 +42,15 @@ export default function SignUpForm() {
             } else {
                 const user = { pseudo, email, password };
 
-                const signUpData = await apiRequest(URL_API_SIGNUP, user);
+                const signUpData = await apiRequest(URL_SIGNUP, user);
                 if (signUpData.errors) {
                     setErrors({ ...errors, ...signUpData.errors });
                 } else {
-                    const loginData = await apiRequest(URL_API_LOGIN, user);
-                    localStorage.setItem("token", JSON.stringify(loginData.token));
-                    localStorage.setItem("userId", JSON.stringify(loginData.userId));
+                    const { userId, token } = await dispatch(loginUser(user));
+
+                    setLocal('userId', userId)
+                    setLocal('token', token)
+
                     navigate("/");
                 }
             }

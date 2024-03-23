@@ -40,7 +40,7 @@ module.exports.createOnePost = async (req, res) => {
 module.exports.getAllPosts = async (req, res) => {
     try {
         const posts = await PostModel.find().sort({ createdAt: -1 }) // Permet d'inversé les posts
-        res.status(200).json({ posts })
+        res.status(200).json(posts)
     } catch (err) {
         res.status(500).json({ error: err.message })
     }

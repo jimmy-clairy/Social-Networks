@@ -3,10 +3,7 @@ import Logout from "./log/Logout";
 import { useSelector } from "react-redux";
 
 export default function Navbar() {
-    console.log('NavBar');
-    const token = localStorage.getItem('token')
     const userData = useSelector((state) => state.userReducer)
-    console.log(userData);
 
     return (
         <nav>
@@ -19,7 +16,7 @@ export default function Navbar() {
                         </div>
                     </NavLink>
                 </div>
-                {token ?
+                {userData ?
                     <ul>
                         <li></li>
                         <li className="welcome">

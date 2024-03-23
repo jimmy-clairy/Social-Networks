@@ -1,10 +1,10 @@
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 export default function Logout() {
-    console.log('Logout');
     const navigate = useNavigate();
 
-    function logout() {
+    const logout = async () => {
         localStorage.removeItem('token')
         localStorage.removeItem('userId')
         navigate('./profil')

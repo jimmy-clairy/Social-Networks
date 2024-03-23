@@ -15,15 +15,6 @@ const store = configureStore({
   devTools: true,
 })
 
-const userId = JSON.parse(localStorage.getItem('userId'))
-const token = JSON.parse(localStorage.getItem('token'))
-
-if (userId && token) {
-  store.dispatch(getUser(userId, token));
-}
-
-store.dispatch(getPosts());
-
 ReactDOM.createRoot(document.getElementById('root')).render(
   <Provider store={store}>
     <App />
