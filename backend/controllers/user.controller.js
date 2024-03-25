@@ -3,7 +3,6 @@ const UserModel = require("../models/User.model")
 const fsPromises = require('fs').promises
 const { checkUserId } = require("../utils/check.utils")
 const { deleteAllUserData } = require("../utils/deleteAllUserData.utils")
-const { uploadPicture } = require("../utils/uploadPicture.utils")
 
 const handleError = (res, err) => {
     res.status(500).json({ error: err.message })
@@ -33,27 +32,16 @@ module.exports.getOneUser = async (req, res) => {
 module.exports.updateOneUser = async (req, res) => {
     try {
         const userId = req.params.id
-        const file = req.file
 
         const user = await checkUserId(userId)
 
         if (user.id !== req.auth.userId) {
             throw new Error('Unauthorized: You are not allowed to update this user.')
         }
-        console.log(req.body.bio);
-        console.log(req.file);
-        if (!req.body.bio && !req.file) {
-            throw new Error('No data provided for creating the post')
-        }
-
-        let picture
-        if (file) {
-            picture = await uploadPicture(userId, file)
-        }
 
         const userUpdated = await UserModel.findByIdAndUpdate(
             userId,
-            { $set: { bio: req.body.bio, picture } },
+            { $set: { bio: req.body.bio } },
             { new: true }
         ).select('-password')
 
@@ -81,7 +69,7 @@ module.exports.deleteOneUser = async (req, res) => {
 
         // Delete the user's profile picture if it exists and it's not the default picture
         if (user.picture && user.picture !== './profil/random-user.png') {
-            await fsPromises.unlink(`${process.env.PATH_PICTURE}/${user.picture}`)
+            await fsPromises.unlink(`../frontend/public/${user.picture}`)
         }
 
         // Delete the user
