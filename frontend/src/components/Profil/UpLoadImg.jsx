@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { putUser } from "../../actions/user.actions";
+import { getLocal } from "../../utils/localStorage";
 
 export default function UpLoadImg({ onProfilePictureUpdate }) {
     const [file, setFile] = useState(null);
     const dispatch = useDispatch();
     const userData = useSelector((state) => state.userReducer);
-    const token = JSON.parse(localStorage.getItem('token'));
+    const token = getLocal('token')
 
     const handlePicture = async (e) => {
         e.preventDefault();
@@ -17,7 +18,7 @@ export default function UpLoadImg({ onProfilePictureUpdate }) {
             const formData = new FormData();
             formData.append('file', file);
 
-            await dispatch(putUser(userData._id, token, formData));
+            dispatch(putUser(userData._id, token, formData));
 
             onProfilePictureUpdate(URL.createObjectURL(file));
         } catch (error) {

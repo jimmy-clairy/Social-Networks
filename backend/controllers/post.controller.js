@@ -31,7 +31,7 @@ module.exports.createOnePost = async (req, res) => {
 
         await newPost.save()
 
-        res.status(201).json({ message: `Create one Post${picture ? ' with a picture' : ' without picture'}`, newPost })
+        res.status(201).json(newPost)
     } catch (err) {
         res.status(500).json({ error: err.message })
     }
@@ -54,7 +54,7 @@ module.exports.getOnePost = async (req, res) => {
 
         const post = await PostModel.findById(postId)
 
-        res.status(200).json({ message: 'Get one post', post })
+        res.status(200).json(post)
     } catch (err) {
         res.status(500).json({ error: err.message })
     }
@@ -115,7 +115,7 @@ module.exports.updateOnePost = async (req, res) => {
             { new: true }
         )
 
-        res.status(200).json({ message: 'Update one post', postUpdated })
+        res.status(200).json(postUpdated)
     } catch (err) {
         res.status(500).json({ error: err.message })
     }

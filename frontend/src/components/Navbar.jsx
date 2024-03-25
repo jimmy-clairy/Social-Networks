@@ -5,7 +5,7 @@ import { getLocal } from "../utils/localStorage";
 
 export default function Navbar() {
     const userData = useSelector((state) => state.userReducer)
-    const token = getLocal('token')
+    const userId = getLocal('userId')
 
     return (
         <nav>
@@ -18,7 +18,7 @@ export default function Navbar() {
                         </div>
                     </NavLink>
                 </div>
-                {token ?
+                {userId ?
                     <ul>
                         <li></li>
                         <li className="welcome">
