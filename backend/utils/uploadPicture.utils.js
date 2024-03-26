@@ -33,7 +33,7 @@ module.exports.uploadPicture = async (userId, file, type = 'profil', maxSizeFile
     // Set file name
     let fileName;
     if (modifWithSameFileName) {
-        fileName = modifWithSameFileName.replace(`./${type}/`, '');
+        fileName = modifWithSameFileName.replace(`uploads/${type}/`, '');
     } else {
         const timestamp = type === 'post' ? Date.now() : '';
         fileName = `${userId}${timestamp}.jpg`;

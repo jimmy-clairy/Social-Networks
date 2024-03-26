@@ -11,7 +11,7 @@ const handleError = (res, err) => {
 module.exports.getAllUsers = async (req, res) => {
     try {
         const users = await UserModel.find().select('-password')
-        res.status(200).json({ message: `Get ${users.length} users`, users })
+        res.status(200).json(users)
     } catch (err) {
         handleError(res, err)
     }

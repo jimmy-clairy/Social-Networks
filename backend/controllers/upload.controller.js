@@ -15,7 +15,7 @@ module.exports.uploadProfil = async (req, res) => {
         const userUpdated = await UserModel.findByIdAndUpdate(
             userId,
             { $set: { picture: picture } },
-            { new: true }
+            { new: true, upsert: true, setDefaultsOnInsert: true }
         ).select('-password')
 
         return res.status(203).json(userUpdated)

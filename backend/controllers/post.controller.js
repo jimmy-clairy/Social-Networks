@@ -74,7 +74,7 @@ module.exports.deleteOnePost = async (req, res) => {
 
         // If the post has a picture, delete it
         if (post.picture) {
-            await fsPromises.unlink(`${process.env.PATH_PICTURE}/${post.picture}`)
+            await fsPromises.unlink(`../frontend/public/${post.picture}`)
         }
 
         await PostModel.findByIdAndDelete(postId)
@@ -112,7 +112,7 @@ module.exports.updateOnePost = async (req, res) => {
         const postUpdated = await PostModel.findByIdAndUpdate(
             postId,
             { message, video, picture },
-            { new: true }
+            { new: true, upsert: true, setDefaultsOnInsert: true }
         )
 
         res.status(200).json(postUpdated)
