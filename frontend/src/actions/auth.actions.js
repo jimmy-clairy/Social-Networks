@@ -18,13 +18,13 @@ export const loginUser = (user) => {
                 throw new Error(`Failed to fetch user with ID ${user}. Status: ${response.status}`);
             }
 
-            const { userId, token } = await response.json()
+            const data = await response.json()
 
-            setLocal('userId', userId)
-            setLocal('token', token)
+            setLocal('userId', data.userId)
+            setLocal('token', data.token)
 
-            dispatch({ type: LOGIN_USER, payload: { userId, token } })
-            return { userId, token }
+            dispatch({ type: LOGIN_USER, payload: data })
+            // return data
         } catch (error) {
             console.error("Error fetching user:", error);
             throw error

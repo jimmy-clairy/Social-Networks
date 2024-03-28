@@ -17,7 +17,7 @@ export default function Login() {
         try {
             const user = { email, password };
 
-            await dispatch(loginUser(user))
+            dispatch(loginUser(user))
 
             navigate("/");
         } catch (error) {

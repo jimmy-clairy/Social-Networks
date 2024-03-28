@@ -1,9 +1,11 @@
+import { URL_POSTS } from "../utils/url_api";
+
 export const GET_POSTS = "GET_POSTS"
 
 export const getPosts = () => {
     return async (dispatch) => {
         try {
-            const response = await fetch(`http://localhost:5000/api/post`)
+            const response = await fetch(URL_POSTS)
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }

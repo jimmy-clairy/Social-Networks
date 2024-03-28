@@ -1,3 +1,5 @@
+import { URL_USER } from "../utils/url_api";
+
 export const GET_USER = "GET_USER"
 export const PUT_USER = "PUT_USER"
 
@@ -9,7 +11,7 @@ export const getUser = (userId, token) => {
                 method: 'GET',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
             };
-            const response = await fetch(`http://localhost:5000/api/user/${userId}`, options)
+            const response = await fetch(`${URL_USER}${userId}`, options)
 
             if (!response.ok) {
                 throw new Error(`Failed to fetch user with ID ${userId}. Status: ${response.status}`);
