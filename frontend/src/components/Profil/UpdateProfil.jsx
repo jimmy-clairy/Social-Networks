@@ -4,6 +4,7 @@ import LeftNav from "../LeftNav";
 import UpLoadImg from "./UpLoadImg";
 import { putUser } from "../../actions/user.actions";
 import { getLocal } from "../../utils/localStorage";
+import { dateParser } from "../../utils/Utils";
 
 export default function UpdateProfil() {
 
@@ -48,6 +49,7 @@ export default function UpdateProfil() {
                                     <button onClick={handleUpdate}>Valider modifications</button>
                                 </>)}
                     </div>
+                    <h4>Membre depuis le : {dateParser(userData.createdAt)}</h4>
                 </div>
             </div>
         </div>
