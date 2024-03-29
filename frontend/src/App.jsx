@@ -6,6 +6,7 @@ import Trending from "./pages/Trending";
 import { useDispatch } from "react-redux";
 import { getLocal } from "./utils/localStorage";
 import { getUser } from "./actions/user.actions";
+import { getPosts } from "./actions/post.actions";
 
 function App() {
   const dispatch = useDispatch()
@@ -16,6 +17,7 @@ function App() {
   if (userId && token) {
     dispatch(getUser(userId, token))
   }
+  dispatch(getPosts())
 
   return (
     <BrowserRouter>
