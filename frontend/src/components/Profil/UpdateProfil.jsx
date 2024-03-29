@@ -61,6 +61,9 @@ export default function UpdateProfil() {
                 <div className="modal">
                     <h3>Abonnements</h3>
                     <span onClick={() => setFollowinPopup(false)} className="cross">&#10005;</span>
+                    <ul>
+
+                    </ul>
                 </div>
             </div>}
             {followersPopup && <div className="popup-profil-container">
