@@ -1,4 +1,3 @@
-// UpdateProfil.js
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import LeftNav from "../LeftNav";
@@ -7,32 +6,18 @@ import { putUser } from "../../actions/user.actions";
 import { getLocal } from "../../utils/localStorage";
 
 export default function UpdateProfil() {
-    const [bio, setBio] = useState('')
-    const dispatch = useDispatch()
+
+    const userData = useSelector((state) => state.userReducer);
     const token = getLocal('token')
+    const dispatch = useDispatch()
+    const [bio, setBio] = useState('')
 
     const [updateForm, setUpdateForm] = useState(true)
-    const userData = useSelector((state) => state.userReducer);
-    const [profilePicture, setProfilePicture] = useState('./uploads/profil/random-user.png');
-
-    useEffect(() => {
-        if (userData && userData.picture) {
-            setProfilePicture(userData.picture);
-        }
-    }, [userData]);
 
     const handleUpdate = () => {
-        const formData = new FormData();
-        formData.append('bio', bio);
-
-        dispatch(putUser(userData._id, token, formData))
+        dispatch(putUser(userData._id, token, bio))
         setUpdateForm(!updateForm)
     }
-
-    const handleProfilePictureUpdate = (newPicture) => {
-        setProfilePicture(newPicture);
-    };
-
 
     return (
         <div className="profil-container">
@@ -41,8 +26,8 @@ export default function UpdateProfil() {
             <div className="update-container">
                 <div className="left-part">
                     <h3>Photo de profil</h3>
-                    <img src={profilePicture} alt="user-pic" />
-                    <UpLoadImg onProfilePictureUpdate={handleProfilePictureUpdate} />
+                    <img src={userData.picture} alt="user-pic" />
+                    <UpLoadImg />
                 </div>
                 <div className="right-part">
                     <div className="bio-update">
@@ -60,7 +45,7 @@ export default function UpdateProfil() {
                                         defaultValue={userData.bio}
                                         onChange={(e) => setBio(e.target.value)}
                                     />
-                                    <button onClick={handleUpdate}>Modifier bio</button>
+                                    <button onClick={handleUpdate}>Valider modifications</button>
                                 </>)}
                     </div>
                 </div>

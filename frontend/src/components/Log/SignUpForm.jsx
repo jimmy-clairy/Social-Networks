@@ -46,10 +46,9 @@ export default function SignUpForm() {
                 if (signUpData.errors) {
                     setErrors({ ...errors, ...signUpData.errors });
                 } else {
-                    const { userId, token } = await dispatch(loginUser(user));
+                    const data = await dispatch(loginUser(user))
 
-                    setLocal('userId', userId)
-                    setLocal('token', token)
+                    await dispatch(getUser(data.userId, data.token))
 
                     navigate("/");
                 }

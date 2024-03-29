@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { putUser } from "../../actions/user.actions";
+import { uploadUserImg } from "../../actions/user.actions";
 import { getLocal } from "../../utils/localStorage";
 
-export default function UpLoadImg({ onProfilePictureUpdate }) {
+export default function UpLoadImg() {
     const [file, setFile] = useState(null);
     const dispatch = useDispatch();
     const userData = useSelector((state) => state.userReducer);
@@ -17,10 +17,10 @@ export default function UpLoadImg({ onProfilePictureUpdate }) {
 
             const formData = new FormData();
             formData.append('file', file);
+            dispatch(uploadUserImg(token, formData));
 
-            dispatch(putUser(userData._id, token, formData));
+            // console.log(URL.createObjectURL(file))
 
-            onProfilePictureUpdate(URL.createObjectURL(file));
         } catch (error) {
             console.error('Error uploading image:', error);
         }

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { loginUser } from "../../actions/auth.actions";
+import { getUser } from "../../actions/user.actions";
 
 export default function Login() {
     const dispatch = useDispatch()
@@ -17,7 +18,9 @@ export default function Login() {
         try {
             const user = { email, password };
 
-            dispatch(loginUser(user))
+            const data = await dispatch(loginUser(user))
+
+            await dispatch(getUser(data.userId, data.token))
 
             navigate("/");
         } catch (error) {

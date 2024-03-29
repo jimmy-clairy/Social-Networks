@@ -1,8 +1,9 @@
 import Log from '../components/log/Auth'
 import UpdateProfil from '../components/profil/UpdateProfil'
+import { getLocal } from '../utils/localStorage'
 
 export default function Profil() {
-    const token = JSON.parse(localStorage.getItem('token'))
+    const token = getLocal('token')
 
     return (
         <div className="profil-page">
