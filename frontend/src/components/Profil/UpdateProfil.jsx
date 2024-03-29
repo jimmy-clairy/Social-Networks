@@ -9,9 +9,12 @@ import { dateParser } from "../../utils/Utils";
 export default function UpdateProfil() {
 
     const userData = useSelector((state) => state.userReducer);
+    console.log(userData);
     const token = getLocal('token')
     const dispatch = useDispatch()
     const [bio, setBio] = useState('')
+    const [followinPopup, setFollowinPopup] = useState(false)
+    const [followersPopup, setFollowersPopup] = useState(false)
 
     const [updateForm, setUpdateForm] = useState(true)
 
@@ -50,8 +53,22 @@ export default function UpdateProfil() {
                                 </>)}
                     </div>
                     <h4>Membre depuis le : {dateParser(userData.createdAt)}</h4>
+                    <h5 onClick={() => setFollowinPopup(true)}>Abonnements : {userData.following ? userData.following.length : "0"}</h5>
+                    <h5 onClick={() => setFollowersPopup(true)} >Abonnés : {userData.followers ? userData.followers.length : "0"}</h5>
                 </div>
             </div>
+            {followinPopup && <div className="popup-profil-container">
+                <div className="modal">
+                    <h3>Abonnements</h3>
+                    <span onClick={() => setFollowinPopup(false)} className="cross">&#10005;</span>
+                </div>
+            </div>}
+            {followersPopup && <div className="popup-profil-container">
+                <div className="modal">
+                    <h3>Abonnés</h3>
+                    <span onClick={() => setFollowersPopup(false)} className="cross">&#10005;</span>
+                </div>
+            </div>}
         </div>
     );
 }
