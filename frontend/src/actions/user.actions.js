@@ -2,6 +2,7 @@ import { URL_USER } from "../utils/url_api";
 
 export const GET_USER = "GET_USER"
 export const PUT_USER = "PUT_USER"
+export const UPLOAD_PICTURE = "UPLOAD_PICTURE"
 
 export const getUser = (userId, token) => {
 
@@ -28,20 +29,43 @@ export const getUser = (userId, token) => {
     }
 }
 
-export const putUser = (userId, token, formData) => {
+export const putUser = (userId, token, bio) => {
     return async (dispatch) => {
         try {
             const options = {
                 method: 'PUT',
-                headers: { 'Authorization': `Bearer ${token}` },
-                body: formData
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify({ bio })
             };
-            const response = await fetch(`http://localhost:5000/api/user/${userId}`, options);
+
+            const response = await fetch(`${URL_USER}${userId}`, options);
+
             const data = await response.json();
-            console.log(data);
+
             dispatch({ type: PUT_USER, payload: data });
         } catch (error) {
             console.error("Error fetching user:", error);
+            throw error;
+        }
+    };
+};
+
+export const uploadUserImg = (token, formData) => {
+    return async (dispatch) => {
+        try {
+            const options = {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` },
+                body: formData
+            };
+
+            const response = await fetch(`${URL_USER}upload`, options);
+
+            const { picture } = await response.json();
+
+            dispatch({ type: UPLOAD_PICTURE, payload: picture });
+        } catch (error) {
+            console.error("Error upload img user:", error);
             throw error;
         }
     };
