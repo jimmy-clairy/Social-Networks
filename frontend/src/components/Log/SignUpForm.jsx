@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import fetchData from "../../utils/fetchData";
-import { URL_LOGIN, URL_SIGNUP } from "../../utils/url_api";
-import { setLocal } from "../../utils/localStorage";
+import { URL_SIGNUP } from "../../utils/url_api";
 import { useDispatch } from "react-redux";
 import { loginUser } from "../../actions/auth.actions";
+import { getUser } from "../../actions/user.actions";
 
 async function apiRequest(url, user) {
     const options = {
