@@ -9,11 +9,12 @@ import { dateParser } from "../../utils/Utils";
 export default function UpdateProfil() {
 
     const userData = useSelector((state) => state.userReducer);
-    console.log(userData);
+    const usersData = useSelector((state) => state.usersReducer);
+
     const token = getLocal('token')
     const dispatch = useDispatch()
     const [bio, setBio] = useState('')
-    const [followinPopup, setFollowinPopup] = useState(false)
+    const [followingPopup, setFollowingPopup] = useState(false)
     const [followersPopup, setFollowersPopup] = useState(false)
 
     const [updateForm, setUpdateForm] = useState(true)
@@ -53,16 +54,24 @@ export default function UpdateProfil() {
                                 </>)}
                     </div>
                     <h4>Membre depuis le : {dateParser(userData.createdAt)}</h4>
-                    <h5 onClick={() => setFollowinPopup(true)}>Abonnements : {userData.following ? userData.following.length : "0"}</h5>
+                    <h5 onClick={() => setFollowingPopup(true)}>Abonnements : {userData.following ? userData.following.length : "0"}</h5>
                     <h5 onClick={() => setFollowersPopup(true)} >Abonnés : {userData.followers ? userData.followers.length : "0"}</h5>
                 </div>
             </div>
-            {followinPopup && <div className="popup-profil-container">
+            {followingPopup && <div className="popup-profil-container">
                 <div className="modal">
                     <h3>Abonnements</h3>
-                    <span onClick={() => setFollowinPopup(false)} className="cross">&#10005;</span>
+                    <span onClick={() => setFollowingPopup(false)} className="cross">&#10005;</span>
                     <ul>
-
+                        {usersData
+                            .filter(user => userData.following.includes(user._id))
+                            .map(user => (
+                                <li key={user._id}>
+                                    <img src={user.picture} alt="user pic" />
+                                    <h4>{user.pseudo}</h4>
+                                    <h5>FOLLOW HANDLER</h5>
+                                </li>
+                            ))}
                     </ul>
                 </div>
             </div>}
@@ -70,6 +79,17 @@ export default function UpdateProfil() {
                 <div className="modal">
                     <h3>Abonnés</h3>
                     <span onClick={() => setFollowersPopup(false)} className="cross">&#10005;</span>
+                    <ul>
+                        {usersData
+                            .filter(user => userData.followers.includes(user._id))
+                            .map(user => (
+                                <li key={user._id}>
+                                    <img src={user.picture} alt="user pic" />
+                                    <h4>{user.pseudo}</h4>
+                                    <h5>FOLLOW HANDLER</h5>
+                                </li>
+                            ))}
+                    </ul>
                 </div>
             </div>}
         </div>
