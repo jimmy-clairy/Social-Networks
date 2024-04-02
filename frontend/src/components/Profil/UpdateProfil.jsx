@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import LeftNav from "../LeftNav";
 import UpLoadImg from "./UpLoadImg";
 import { putUser } from "../../actions/user.actions";
 import { getLocal } from "../../utils/localStorage";
 import { dateParser } from "../../utils/Utils";
+import FollowHandler from "./followHandler";
 
 export default function UpdateProfil() {
 
@@ -69,7 +70,9 @@ export default function UpdateProfil() {
                                 <li key={user._id}>
                                     <img src={user.picture} alt="user pic" />
                                     <h4>{user.pseudo}</h4>
-                                    <h5>FOLLOW HANDLER</h5>
+                                    <div className="follow-handler">
+                                        <FollowHandler idToFollow={user._id} />
+                                    </div>
                                 </li>
                             ))}
                     </ul>
@@ -86,7 +89,9 @@ export default function UpdateProfil() {
                                 <li key={user._id}>
                                     <img src={user.picture} alt="user pic" />
                                     <h4>{user.pseudo}</h4>
-                                    <h5>FOLLOW HANDLER</h5>
+                                    <div className="follow-handler">
+                                        <FollowHandler idToFollow={user._id} />
+                                    </div>
                                 </li>
                             ))}
                     </ul>
