@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { isEmpty } from "../../utils/Utils";
 import { followUser, unfollowUser } from "../../actions/user.actions";
 
-export default function followHandler({ idToFollow, type }) {
+export default function FollowHandler({ idToFollow, type }) {
     const userData = useSelector((state) => state.userReducer)
     const dispatch = useDispatch()
 

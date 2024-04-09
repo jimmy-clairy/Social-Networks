@@ -13,7 +13,7 @@ export default function Card({ post }) {
             setIsLoading(false);
         }
     }, [usersData]);
-    console.log(post);
+    // console.log(post);
     return (
         <li className="card-container">
             {isLoading ? (
