@@ -18,7 +18,7 @@ function App() {
   if (userId && token) {
     dispatch(getUser(userId, token))
   }
-  dispatch(getPosts())
+  // dispatch(getPosts())
   dispatch(getUsers())
 
   return (
