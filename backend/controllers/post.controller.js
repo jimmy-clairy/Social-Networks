@@ -133,15 +133,15 @@ module.exports.likePost = async (req, res) => {
             postId,
             { $addToSet: { likers: userId } },
             { new: true }
-        ).select('posterId likers')
+        )
 
         const userLiked = await UserModel.findByIdAndUpdate(
             userId,
             { $addToSet: { likes: postId } },
             { new: true }
-        ).select('pseudo likes')
+        )
 
-        res.status(200).json({ userLiked, postLiked })
+        res.status(200).json(postLiked)
     } catch (err) {
         res.status(500).json({ error: err.message })
     }
@@ -159,16 +159,16 @@ module.exports.unlikePost = async (req, res) => {
             postId,
             { $pull: { likers: userId } },
             { new: true }
-        ).select('posterId likers')
+        )
 
         const userLiked = await UserModel.findByIdAndUpdate(
             userId,
             { $pull: { likes: postId } },
             { new: true }
-        ).select('pseudo likes')
+        )
 
 
-        res.status(200).json({ userLiked, postLiked })
+        res.status(200).json(postLiked)
     } catch (err) {
         res.status(500).json({ error: err.message })
     }

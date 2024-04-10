@@ -2,18 +2,20 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { dateParser, isEmpty } from "../utils/Utils";
 import FollowHandler from "./profil/FollowHandler";
+import LikeButton from "./post/LikeButton";
+import { getLocal } from "../utils/localStorage";
 
 export default function Card({ post }) {
-    const [isLoading, setIsLoading] = useState(true);
-    const usersData = useSelector((state) => state.usersReducer);
-    const userData = useSelector((state) => state.userReducer);
+    const [isLoading, setIsLoading] = useState(true)
+    const usersData = useSelector((state) => state.usersReducer)
+    const userId = getLocal('userId')
 
     useEffect(() => {
         if (!isEmpty(usersData)) {
             setIsLoading(false);
         }
     }, [usersData]);
-    // console.log(post);
+
     return (
         <li className="card-container">
             {isLoading ? (
@@ -38,7 +40,7 @@ export default function Card({ post }) {
                                     }
                                     return null;
                                 })}
-                                {post.posterId !== userData._id && <FollowHandler idToFollow={post.posterId} type={'card'} />}
+                                {(post.posterId !== userId && userId !== null) && <FollowHandler idToFollow={post.posterId} type={'card'} />}
 
                             </div>
                             <span>{dateParser(post.createdAt)}</span>
@@ -50,17 +52,15 @@ export default function Card({ post }) {
                             height="315"
                             src={post.video}
                             title="YouTube video player"
-                            frameborder="0"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                            referrerpolicy="strict-origin-when-cross-origin"
-                            allowfullscreen>
+                        >
                         </iframe>}
                         <div className="card-footer">
                             <div className="comment-icon">
                                 <img src="./img/icons/message1.svg" alt="comment" />
                                 <span>{post.comments.length}</span>
                             </div>
-                            <h6>Like button</h6>
+                            <LikeButton post={post} />
                             <img src="./img/icons/share.svg" alt="share" />
                         </div>
                     </div>
