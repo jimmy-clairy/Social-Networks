@@ -2,6 +2,7 @@ import { getLocal } from "../utils/localStorage";
 import { URL_USER } from "../utils/url_api";
 
 export const GET_USER = "GET_USER"
+export const LOGOUT_USER = "LOGOUT_USER"
 export const PUT_USER = "PUT_USER"
 export const UPLOAD_PICTURE = "UPLOAD_PICTURE"
 export const FOLLOW_USER = "FOLLOW_USER"
@@ -29,6 +30,12 @@ export const getUser = (userId, token) => {
             console.error("Error fetching user:", error);
             throw error
         }
+    }
+}
+
+export const logoutUser = () => {
+    return (dispatch) => {
+        dispatch({ type: LOGOUT_USER, payload: {} })
     }
 }
 

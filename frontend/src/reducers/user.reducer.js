@@ -1,4 +1,4 @@
-import { FOLLOW_USER, GET_USER, PUT_USER, UNFOLLOW_USER, UPLOAD_PICTURE } from "../actions/user.actions";
+import { FOLLOW_USER, GET_USER, LOGOUT_USER, PUT_USER, UNFOLLOW_USER, UPLOAD_PICTURE } from "../actions/user.actions";
 
 const initialState = {};
 
@@ -26,6 +26,9 @@ export default function userReducer(state = initialState, action) {
                 ...state,
                 following: state.following.filter((id) => id !== action.payload.idToFollow)
             }
+        case LOGOUT_USER:
+            return action.payload;
+
         default:
             return state;
     }
