@@ -1,14 +1,13 @@
-import Log from '../components/log/Auth'
-import UpdateProfil from '../components/profil/UpdateProfil'
-import { getLocal } from '../utils/localStorage'
+import Log from '../components/log/Auth';
+import { useSelector } from "react-redux";
+import UpdateProfil from '../components/profil/UpdateProfil';
 
 export default function Profil() {
-    const token = getLocal('token')
-
+    const userData = useSelector((state) => state.userReducer)
     return (
         <div className="profil-page">
 
-            {token ? <UpdateProfil /> :
+            {userData._id ? <UpdateProfil /> :
 
                 <div className="log-container">
                     <Log signIn={true} />
