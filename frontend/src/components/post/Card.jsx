@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { dateParser, isEmpty } from "../utils/Utils";
-import FollowHandler from "./profil/FollowHandler";
-import LikeButton from "./post/LikeButton";
-import { getLocal } from "../utils/localStorage";
-import { updatePost } from "../actions/post.actions";
-import DeleteCard from "./post/DeleteCard";
+import { dateParser, isEmpty } from "../../utils/Utils";
+import FollowHandler from "../profil/FollowHandler";
+import LikeButton from "./LikeButton";
+import { getLocal } from "../../utils/localStorage";
+import { updatePost } from "../../actions/post.actions";
+import DeleteCard from "./DeleteCard";
 
 export default function Card({ post }) {
     const [isLoading, setIsLoading] = useState(true)
