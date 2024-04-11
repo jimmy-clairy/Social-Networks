@@ -5,6 +5,7 @@ import FollowHandler from "./profil/FollowHandler";
 import LikeButton from "./post/LikeButton";
 import { getLocal } from "../utils/localStorage";
 import { updatePost } from "../actions/post.actions";
+import DeleteCard from "./post/DeleteCard";
 
 export default function Card({ post }) {
     const [isLoading, setIsLoading] = useState(true)
@@ -79,13 +80,16 @@ export default function Card({ post }) {
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                         >
                         </iframe>}
+
                         {userId === post.posterId &&
                             <div className="button-container">
                                 <div onClick={() => setIsUpdate(!isUpdate)}>
                                     <img src="./img/icons/edit.svg" alt="edit" />
                                 </div>
+                                <DeleteCard id={post._id} />
                             </div>
                         }
+
                         <div className="card-footer">
                             <div className="comment-icon">
                                 <img src="./img/icons/message1.svg" alt="comment" />

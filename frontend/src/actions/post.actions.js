@@ -5,6 +5,7 @@ export const GET_POSTS = "GET_POSTS"
 export const LIKE_POST = "LIKE_POST"
 export const UNLIKE_POST = "UNLIKE_POST"
 export const UPDATE_POST = "UPDATE_POST"
+export const DELETE_POST = "DELETE_POST"
 
 export const getPosts = (num) => {
     return async (dispatch) => {
@@ -94,6 +95,30 @@ export const updatePost = (postId, message) => {
 
         } catch (error) {
             console.error("Error fetching user:", error);
+            throw error
+        }
+    }
+}
+
+export const deletePost = (postId) => {
+    const token = getLocal('token')
+
+    return async (dispatch) => {
+        try {
+            const options = {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }
+            };
+            const response = await fetch(`${URL_POSTS}${postId}`, options)
+
+            if (!response.ok) {
+                throw new Error(`Failed to delete post with ID ${postId}. Status: ${response.status}`);
+            }
+
+            dispatch({ type: DELETE_POST, payload: { postId } })
+
+        } catch (error) {
+            console.error("Error delete post:", error);
             throw error
         }
     }
