@@ -1,14 +1,25 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { dateParser, isEmpty } from "../utils/Utils";
 import FollowHandler from "./profil/FollowHandler";
 import LikeButton from "./post/LikeButton";
 import { getLocal } from "../utils/localStorage";
+import { updatePost } from "../actions/post.actions";
 
 export default function Card({ post }) {
     const [isLoading, setIsLoading] = useState(true)
+    const [isUpdate, setIsUpdate] = useState(false)
+    const [textupdate, setTextUpdate] = useState(null)
     const usersData = useSelector((state) => state.usersReducer)
+    const dispatch = useDispatch()
     const userId = getLocal('userId')
+
+    const updateItem = () => {
+        if (textupdate) {
+            dispatch(updatePost(post._id, textupdate))
+        }
+        setIsUpdate(false)
+    }
 
     useEffect(() => {
         if (!isEmpty(usersData)) {
@@ -45,7 +56,20 @@ export default function Card({ post }) {
                             </div>
                             <span>{dateParser(post.createdAt)}</span>
                         </div>
-                        <p>{post.message}</p>
+                        {isUpdate === false && <p>{post.message}</p>}
+                        {isUpdate &&
+                            <div className="update-post">
+                                <textarea
+                                    defaultValue={post.message}
+                                    onChange={(e) => setTextUpdate(e.target.value)}
+                                />
+                                <div className="button-container">
+                                    <button className="btn" onClick={updateItem}>
+                                        valider modification
+                                    </button>
+                                </div>
+                            </div>
+                        }
                         {post.picture && <img className="card-pic" src={post.picture} alt="Card pic" />}
                         {post.video && <iframe
                             width="560"
@@ -55,6 +79,13 @@ export default function Card({ post }) {
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                         >
                         </iframe>}
+                        {userId === post.posterId &&
+                            <div className="button-container">
+                                <div onClick={() => setIsUpdate(!isUpdate)}>
+                                    <img src="./img/icons/edit.svg" alt="edit" />
+                                </div>
+                            </div>
+                        }
                         <div className="card-footer">
                             <div className="comment-icon">
                                 <img src="./img/icons/message1.svg" alt="comment" />
