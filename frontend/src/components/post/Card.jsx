@@ -6,11 +6,14 @@ import LikeButton from "./LikeButton";
 import { getLocal } from "../../utils/localStorage";
 import { updatePost } from "../../actions/post.actions";
 import DeleteCard from "./DeleteCard";
+import CardComment from "./CardComment";
 
 export default function Card({ post }) {
     const [isLoading, setIsLoading] = useState(true)
     const [isUpdate, setIsUpdate] = useState(false)
     const [textupdate, setTextUpdate] = useState(null)
+    const [showComment, setShowComment] = useState(false)
+
     const usersData = useSelector((state) => state.usersReducer)
     const dispatch = useDispatch()
     const userId = getLocal('userId')
@@ -92,12 +95,17 @@ export default function Card({ post }) {
 
                         <div className="card-footer">
                             <div className="comment-icon">
-                                <img src="./img/icons/message1.svg" alt="comment" />
+                                <img
+                                    onClick={() => setShowComment(!showComment)}
+                                    src="./img/icons/message1.svg"
+                                    alt="comment"
+                                />
                                 <span>{post.comments.length}</span>
                             </div>
                             <LikeButton post={post} />
                             <img src="./img/icons/share.svg" alt="share" />
                         </div>
+                        {showComment && <CardComment post={post} />}
                     </div>
                 </>
             )}

@@ -26,6 +26,7 @@ export default function FollowHandler({ idToFollow, type }) {
                 setIsFollowed(false)
             }
         }
+        console.log('test');
     }, [userData, idToFollow])
 
     return (
@@ -34,7 +35,6 @@ export default function FollowHandler({ idToFollow, type }) {
                 <span onClick={handleUnfollow}>
                     {type === 'suggestion' && <button className="unfollow-btn"> Unfollow </button>}
                     {type === 'card' && <img src="./img/icons/checked.svg" alt='checked' />}
-
                 </span>
                 :
                 <span onClick={handleFollow}>
