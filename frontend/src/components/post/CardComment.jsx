@@ -3,6 +3,7 @@ import { getLocal } from '../../utils/localStorage';
 import { useState } from 'react';
 import FollowHandler from '../profil/FollowHandler';
 import { timestampParser } from '../../utils/Utils';
+import { addComment, getPosts } from '../../actions/post.actions';
 
 export default function CardComment({ post }) {
     const [text, setText] = useState('')
@@ -10,9 +11,15 @@ export default function CardComment({ post }) {
     const dispatch = useDispatch()
     const userId = getLocal('userId')
 
-    const handleComment = () => { }
+    const handleComment = (e) => {
+        e.preventDefault();
+        if (text) {
+            dispatch(addComment(text, post._id))
+            dispatch(getPosts())
+            setText('')
+        }
+    }
 
-    console.log(post);
     return (
         <div className="comments-container">
             {post.comments.map((comment) =>
@@ -36,6 +43,18 @@ export default function CardComment({ post }) {
                         <p>{comment.text}</p>
                     </div>
                 </div>)}
+            {userId &&
+                <form action="" onSubmit={handleComment} className='comment-form'>
+                    <input
+                        type="text"
+                        name='text'
+                        onChange={(e) => setText(e.target.value)}
+                        value={text}
+                        placeholder='Laisser un commentaire'
+                    />
+                    <input type="submit" value="Envoyer" />
+                </form>
+            }
         </div>
     )
 }

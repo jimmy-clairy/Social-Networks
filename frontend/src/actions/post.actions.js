@@ -1,11 +1,15 @@
 import { getLocal } from "../utils/localStorage";
 import { URL_POSTS } from "../utils/url_api";
 
+// Post
 export const GET_POSTS = "GET_POSTS"
 export const LIKE_POST = "LIKE_POST"
 export const UNLIKE_POST = "UNLIKE_POST"
 export const UPDATE_POST = "UPDATE_POST"
 export const DELETE_POST = "DELETE_POST"
+
+// Comments
+export const ADD_COMMENT = "ADD_COMMENT"
 
 export const getPosts = (num) => {
     return async (dispatch) => {
@@ -119,6 +123,31 @@ export const deletePost = (postId) => {
 
         } catch (error) {
             console.error("Error delete post:", error);
+            throw error
+        }
+    }
+}
+
+export const addComment = (text, postId) => {
+    const token = getLocal('token')
+
+    return async (dispatch) => {
+        try {
+            const options = {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify({ text })
+            };
+            const response = await fetch(`${URL_POSTS}comment/${postId}`, options)
+
+            if (!response.ok) {
+                throw new Error(`Failed to add comment with ID ${postId}. Status: ${response.status}`);
+            }
+
+            dispatch({ type: ADD_COMMENT, payload: { postId } })
+
+        } catch (error) {
+            console.error("Error add comment:", error);
             throw error
         }
     }
