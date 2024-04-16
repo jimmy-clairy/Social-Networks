@@ -4,6 +4,7 @@ import { useState } from 'react';
 import FollowHandler from '../profil/FollowHandler';
 import { timestampParser } from '../../utils/Utils';
 import { addComment, getPosts } from '../../actions/post.actions';
+import EditDeleteComment from './EditDeleteComment';
 
 export default function CardComment({ post }) {
     const [text, setText] = useState('')
@@ -41,6 +42,7 @@ export default function CardComment({ post }) {
                             <span>{timestampParser(comment.timestamp)}</span>
                         </div>
                         <p>{comment.text}</p>
+                        <EditDeleteComment comment={comment} postId={post._id} />
                     </div>
                 </div>)}
             {userId &&

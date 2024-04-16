@@ -6,7 +6,6 @@ import Trending from "./pages/Trending";
 import { useDispatch } from "react-redux";
 import { getLocal } from "./utils/localStorage";
 import { getUser } from "./actions/user.actions";
-import { getPosts } from "./actions/post.actions";
 import { getUsers } from "./actions/users.actions";
 
 function App() {
@@ -15,10 +14,7 @@ function App() {
   const userId = getLocal('userId')
   const token = getLocal('token')
 
-  if (userId && token) {
-    dispatch(getUser(userId, token))
-  }
-  // dispatch(getPosts())
+  dispatch(getUser(userId, token))
   dispatch(getUsers())
 
   return (

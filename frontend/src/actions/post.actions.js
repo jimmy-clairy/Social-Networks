@@ -10,6 +10,8 @@ export const DELETE_POST = "DELETE_POST"
 
 // Comments
 export const ADD_COMMENT = "ADD_COMMENT"
+export const EDIT_COMMENT = "EDIT_COMMENT"
+export const DELETE_COMMENT = "DELETE_COMMENT"
 
 export const getPosts = (num) => {
     return async (dispatch) => {
@@ -148,6 +150,54 @@ export const addComment = (text, postId) => {
 
         } catch (error) {
             console.error("Error add comment:", error);
+            throw error
+        }
+    }
+}
+export const editComment = (postId, commentId, text) => {
+    const token = getLocal('token')
+
+    return async (dispatch) => {
+        try {
+            const options = {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify({ text, commentId })
+            };
+            const response = await fetch(`${URL_POSTS}edit-comment/${postId}`, options)
+
+            if (!response.ok) {
+                throw new Error(`Failed to edit comment with ID ${postId}. Status: ${response.status}`);
+            }
+
+            dispatch({ type: EDIT_COMMENT, payload: { postId, commentId, text } })
+
+        } catch (error) {
+            console.error("Error edit comment:", error);
+            throw error
+        }
+    }
+}
+export const deleteComment = (postId, commentId) => {
+    const token = getLocal('token')
+
+    return async (dispatch) => {
+        try {
+            const options = {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify({ commentId })
+            };
+            const response = await fetch(`${URL_POSTS}delete-comment/${postId}`, options)
+
+            if (!response.ok) {
+                throw new Error(`Failed to delete comment with ID ${postId}. Status: ${response.status}`);
+            }
+
+            dispatch({ type: DELETE_COMMENT, payload: { postId, commentId } })
+
+        } catch (error) {
+            console.error("Error delete comment:", error);
             throw error
         }
     }

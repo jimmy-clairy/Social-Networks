@@ -26,7 +26,7 @@ export default function FollowHandler({ idToFollow, type }) {
                 setIsFollowed(false)
             }
         }
-        console.log('test');
+        // console.log('test');
     }, [userData, idToFollow])
 
     return (
