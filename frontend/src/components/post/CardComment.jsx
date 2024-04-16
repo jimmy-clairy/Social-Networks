@@ -16,8 +16,8 @@ export default function CardComment({ post }) {
         e.preventDefault();
         if (text) {
             dispatch(addComment(text, post._id))
-            dispatch(getPosts())
-            setText('')
+                .then(() => dispatch(getPosts()))
+                .then(() => setText(''))
         }
     }
 
