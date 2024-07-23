@@ -30,3 +30,13 @@ _____________________________
    - ADMIN_EMAIL='`Votre email d'Administrateur`'
 
 * Démarrer le server : `npm start`
+
+_____________________________
+
+### Frontend config :
+
+* Ouvrez un deuxième terminal
+
+* Installez les dépendances : `cd frontend` + `npm install`
+
+* Démarrer le Front : `npm run dev`
